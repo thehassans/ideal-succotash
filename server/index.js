@@ -6,9 +6,13 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
- const { initializeDatabase, testConnection } = require('./config/database');
+const { initializeDatabase, testConnection } = require('./config/database');
 
 const app = express();
+const startupState = {
+  databaseReady: false,
+  startupError: null
+};
 
 // Security middleware
 app.use(helmet({
@@ -64,6 +68,17 @@ app.get('/api/meta', (req, res) => {
   });
 });
 
+app.get('/api/health', (req, res) => {
+  const statusCode = startupState.databaseReady ? 200 : 503;
+
+  res.status(statusCode).json({
+    success: startupState.databaseReady,
+    environment: process.env.NODE_ENV || 'development',
+    databaseReady: startupState.databaseReady,
+    startupError: startupState.startupError
+  });
+});
+
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
@@ -85,18 +100,31 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3001;
 
- async function startServer() {
-   await testConnection();
-   await initializeDatabase();
+async function initializeApp() {
+  try {
+    const connected = await testConnection();
 
-   app.listen(PORT, () => {
-     console.log(`🚀 Explore Holidays Server running on port ${PORT}`);
-     console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-     console.log(`🌐 URL: ${process.env.APP_URL || `http://localhost:${PORT}`}`);
-   });
- }
+    if (!connected) {
+      throw new Error('PostgreSQL connection failed');
+    }
 
- startServer().catch((error) => {
-   console.error('❌ Failed to start server:', error.message);
-   process.exit(1);
- });
+    await initializeDatabase();
+    startupState.databaseReady = true;
+    startupState.startupError = null;
+  } catch (error) {
+    startupState.databaseReady = false;
+    startupState.startupError = error.message;
+    console.error('❌ Failed to initialize application:', error.message);
+  }
+}
+
+function startServer() {
+  app.listen(PORT, () => {
+    console.log(`🚀 Explore Holidays Server running on port ${PORT}`);
+    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 URL: ${process.env.APP_URL || `http://localhost:${PORT}`}`);
+  });
+}
+
+startServer();
+initializeApp();

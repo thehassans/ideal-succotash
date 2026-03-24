@@ -4,7 +4,7 @@
   "description": "Premium Travel Booking Platform - Explore Holidays",
   "main": "server/index.js",
   "engines": {
-    "node": ">=24.11.1"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "start": "node server/index.js",
