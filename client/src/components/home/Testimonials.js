@@ -23,46 +23,46 @@ const Testimonials = () => {
     {
       id: 1,
       name: 'Rashid Ahmed',
-      name_bn: 'রশিদ আহমেদ',
+      name_bn: 'راشد أحمد',
       role: 'Business Traveler',
-      role_bn: 'ব্যবসায়িক ভ্রমণকারী',
+      role_bn: 'مسافر أعمال',
       image: 'https://randomuser.me/api/portraits/men/1.jpg',
       rating: 5,
-      review: 'Exceptional service! Explore Holidays made my Dubai business trip seamless. Highly recommended for corporate travel.',
-      review_bn: 'অসাধারণ সেবা! এক্সপ্লোর হলিডেস আমার দুবাই ব্যবসায়িক ট্রিপ নির্বিঘ্ন করেছে। কর্পোরেট ভ্রমণের জন্য অত্যন্ত সুপারিশকৃত।'
+      review: 'Exceptional service! Sabir Travels made my Dubai business trip seamless. Highly recommended for corporate travel.',
+      review_bn: 'خدمة ممتازة جدًا. رتبت Sabir Travels رحلتي العملية إلى دبي باحترافية وسلاسة من البداية حتى النهاية.'
     },
     {
       id: 2,
       name: 'Fatima Khan',
-      name_bn: 'ফাতিমা খান',
+      name_bn: 'فاطمة خان',
       role: 'Family Vacation',
-      role_bn: 'পারিবারিক ছুটি',
+      role_bn: 'رحلة عائلية',
       image: 'https://randomuser.me/api/portraits/women/2.jpg',
       rating: 5,
-      review: 'Our family trip to Maldives was absolutely magical. The team took care of every detail. Best travel agency in Bangladesh!',
-      review_bn: 'মালদ্বীপে আমাদের পারিবারিক ট্রিপ একেবারে জাদুকরী ছিল। টিম প্রতিটি বিস্তারিত যত্ন নিয়েছে। বাংলাদেশের সেরা ট্রাভেল এজেন্সি!'
+      review: 'Our family trip to Maldives was absolutely magical. The team took care of every detail. A wonderful agency for family vacations.',
+      review_bn: 'كانت رحلتنا العائلية إلى المالديف رائعة بكل التفاصيل. اهتم الفريق بالحجوزات والتنظيم بشكل ممتاز.'
     },
     {
       id: 3,
       name: 'Mohammad Hasan',
-      name_bn: 'মোহাম্মদ হাসান',
+      name_bn: 'محمد حسن',
       role: 'Adventure Seeker',
-      role_bn: 'অ্যাডভেঞ্চার সন্ধানী',
+      role_bn: 'محب للمغامرة',
       image: 'https://randomuser.me/api/portraits/men/3.jpg',
       rating: 5,
       review: 'From visa processing to hotel booking, everything was perfect. The Thailand package exceeded all my expectations!',
-      review_bn: 'ভিসা প্রসেসিং থেকে হোটেল বুকিং পর্যন্ত, সবকিছু নিখুঁত ছিল। থাইল্যান্ড প্যাকেজ আমার সমস্ত প্রত্যাশা ছাড়িয়ে গেছে!'
+      review_bn: 'من التأشيرة إلى الفندق كان كل شيء منظمًا بشكل مثالي. باقة تايلاند تجاوزت توقعاتي بالكامل.'
     },
     {
       id: 4,
       name: 'Nusrat Jahan',
-      name_bn: 'নুসরাত জাহান',
+      name_bn: 'نُسرت جهان',
       role: 'Honeymoon Trip',
-      role_bn: 'হানিমুন ট্রিপ',
+      role_bn: 'رحلة شهر عسل',
       image: 'https://randomuser.me/api/portraits/women/4.jpg',
       rating: 5,
-      review: 'Our honeymoon in Singapore was unforgettable thanks to Explore Holidays. The attention to detail was impressive!',
-      review_bn: 'এক্সপ্লোর হলিডেসের কারণে সিঙ্গাপুরে আমাদের হানিমুন অবিস্মরণীয় ছিল। বিস্তারিত মনোযোগ চিত্তাকর্ষক ছিল!'
+      review: 'Our honeymoon in Singapore was unforgettable thanks to Sabir Travels. The attention to detail was impressive!',
+      review_bn: 'جعلت Sabir Travels شهر العسل في سنغافورة تجربة لا تُنسى، وكان الاهتمام بالتفاصيل رائعًا جدًا.'
     }
   ];
 
@@ -98,15 +98,15 @@ const Testimonials = () => {
             className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold mb-6 ${useGradients ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-amber-500' : 'bg-slate-900 text-white border-0'}`}
           >
             <Star className="w-4 h-4 mr-2 fill-current" />
-            {language === 'bn' ? 'গ্রাহক পর্যালোচনা' : 'Customer Reviews'}
+            {language === 'bn' ? 'آراء العملاء' : 'Customer Reviews'}
             <Sparkles className="w-4 h-4 ml-2" />
           </motion.span>
           <h2 className={`text-4xl sm:text-5xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'bn' ? 'আমাদের সুখী ভ্রমণকারীরা' : 'Our Happy Travelers'}
+            {language === 'bn' ? 'تجارب عملائنا مع Sabir Travels' : 'Our Happy Travelers'}
           </h2>
           <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {language === 'bn' 
-              ? 'হাজারো সন্তুষ্ট গ্রাহক আমাদের সেবায় খুশি'
+              ? 'قصص حقيقية من مسافرين وثقوا بخدماتنا في الرحلات والعطلات والتأشيرات'
               : 'Thousands of satisfied customers trust us with their travel dreams'}
           </p>
         </motion.div>

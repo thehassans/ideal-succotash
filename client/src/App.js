@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from './context/ThemeContext';
@@ -7,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { GradientProvider } from './context/GradientContext';
 import { BookingProvider } from './context/BookingContext';
 import { AIAgentProvider } from './context/AIAgentContext';
+import { normalizeSaudiCurrencySettings } from './utils/currency';
 
 // Layout Components
 import Header from './components/layout/Header';
@@ -49,6 +51,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminQueries from './pages/admin/AdminQueries';
 import AdminBookings from './pages/admin/AdminBookings';
+import AdminInvoices from './pages/admin/AdminInvoices';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminHolidays from './pages/admin/AdminHolidays';
@@ -58,10 +61,79 @@ import AdminFlightBookings from './pages/admin/AdminFlightBookings';
 import AdminAIAgent from './pages/admin/AdminAIAgent';
 import AdminAgentChats from './pages/admin/AdminAgentChats';
 
+const defaultSiteSettings = {
+  siteTitle: 'Sabir Travels',
+  siteName: 'Sabir Travels',
+  tagline: 'Your trusted travel partner in Saudi Arabia',
+  taglineAr: 'شريكك الموثوق للسفر في المملكة العربية السعودية',
+  currencyCode: 'SAR',
+  currencySymbol: '⃁',
+  locale: 'en-SA',
+  phone: '+966 55 123 4567',
+  email: 'info@sabirtravels.sa',
+  address: 'Olaya Street, Riyadh 12214, Saudi Arabia',
+  footerText: 'Premium travel services tailored for Saudi Arabia and Gulf travelers.',
+  copyrightText: '© 2024 Sabir Travels. All rights reserved.'
+};
+
+const normalizeSiteSettings = (settings = {}) => {
+  const merged = { ...defaultSiteSettings, ...settings };
+  const legacyNames = ['Ahmed Essa Travel', 'Explore Holidays'];
+  const legacyEmails = ['info@ahmedessatravel.sa', 'info@exploreholidays.com'];
+
+  if (!merged.siteName || legacyNames.includes(merged.siteName)) {
+    merged.siteName = defaultSiteSettings.siteName;
+  }
+
+  if (!merged.siteTitle || legacyNames.includes(merged.siteTitle)) {
+    merged.siteTitle = defaultSiteSettings.siteTitle;
+  }
+
+  if (!merged.email || legacyEmails.includes(merged.email)) {
+    merged.email = defaultSiteSettings.email;
+  }
+
+  if (!merged.tagline || merged.tagline === 'Your Premium Travel Partner') {
+    merged.tagline = defaultSiteSettings.tagline;
+  }
+
+  if (!merged.taglineAr) {
+    merged.taglineAr = defaultSiteSettings.taglineAr;
+  }
+
+  return normalizeSaudiCurrencySettings(merged);
+};
+
 function App() {
   const { isDark } = useTheme();
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('siteSettings');
+    if (savedSettings) {
+      try {
+        const normalizedSavedSettings = normalizeSiteSettings(JSON.parse(savedSettings));
+        localStorage.setItem('siteSettings', JSON.stringify(normalizedSavedSettings));
+      } catch (error) {
+        localStorage.setItem('siteSettings', JSON.stringify(defaultSiteSettings));
+      }
+    } else {
+      localStorage.setItem('siteSettings', JSON.stringify(defaultSiteSettings));
+    }
+
+    const hydrateSiteSettings = async () => {
+      try {
+        const response = await axios.get('/api/settings');
+        const { partners, ...settings } = response.data.data;
+        localStorage.setItem('siteSettings', JSON.stringify(normalizeSiteSettings(settings)));
+        localStorage.setItem('sitePartners', JSON.stringify(partners));
+      } catch (error) {
+      }
+    };
+
+    hydrateSiteSettings();
+  }, []);
 
   return (
     <AuthProvider>
@@ -72,8 +144,8 @@ function App() {
             <div className={`min-h-screen flex flex-col ${isDark ? 'dark' : ''}`}>
             <ScrollToTop />
             <Helmet>
-            <title>Explore Holidays | Premium Travel Booking from Bangladesh</title>
-            <meta name="description" content="Book flights, holiday packages, visas, and tours from Bangladesh at the best prices. Your trusted travel partner." />
+            <title>Sabir Travels | Premium Travel Booking from Saudi Arabia</title>
+            <meta name="description" content="Book flights, holiday packages, visas, and tours from Saudi Arabia with Sabir Travels. Your trusted Arabic-first travel partner." />
           </Helmet>
           
           {!isAdminRoute && <Header />}
@@ -115,6 +187,7 @@ function App() {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/queries" element={<AdminQueries />} />
               <Route path="/admin/bookings" element={<AdminBookings />} />
+              <Route path="/admin/invoices" element={<AdminInvoices />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/holidays" element={<AdminHolidays />} />

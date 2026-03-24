@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Award, Plane, Building2, Sparkles } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
@@ -10,38 +11,48 @@ const Partners = () => {
   const { language } = useLanguage();
   const { useGradients } = useGradient();
 
-  // Default partners with real logo URLs from Clearbit (free API)
-  const defaultBanks = [
-    { id: 1, name: 'BRAC Bank', logo: 'https://logo.clearbit.com/bracbank.com', initials: 'BB', gradient: 'from-blue-600 to-blue-800', active: true },
-    { id: 2, name: 'Dutch Bangla', logo: 'https://logo.clearbit.com/dutchbanglabank.com', initials: 'DBBL', gradient: 'from-green-700 to-green-900', active: true },
-    { id: 3, name: 'City Bank', logo: 'https://logo.clearbit.com/thecitybank.com', initials: 'CB', gradient: 'from-indigo-600 to-indigo-800', active: true },
-    { id: 4, name: 'Eastern Bank', logo: 'https://logo.clearbit.com/ebl.com.bd', initials: 'EBL', gradient: 'from-orange-500 to-orange-700', active: true },
-    { id: 5, name: 'bKash', logo: 'https://logo.clearbit.com/bkash.com', initials: 'bK', gradient: 'from-pink-500 to-pink-700', active: true },
-    { id: 6, name: 'Nagad', logo: 'https://logo.clearbit.com/nagad.com.bd', initials: 'N', gradient: 'from-orange-400 to-red-500', active: true },
-  ];
+  const defaultBanks = useMemo(() => [
+    { id: 1, name: 'Al Rajhi Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Al_Rajhi_Bank_Logo.svg', initials: 'AR', gradient: 'from-blue-600 to-blue-800', active: true },
+    { id: 2, name: 'Saudi National Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/68/SNB_Logo.svg', initials: 'SNB', gradient: 'from-green-700 to-green-900', active: true },
+    { id: 3, name: 'Riyad Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Riyad_Bank_logo.svg', initials: 'RB', gradient: 'from-indigo-600 to-indigo-800', active: true },
+    { id: 4, name: 'SAB', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/SABB_logo.svg', initials: 'SAB', gradient: 'from-orange-500 to-orange-700', active: true },
+    { id: 5, name: 'Alinma Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/39/Alinma_Bank.svg', initials: 'AB', gradient: 'from-teal-500 to-emerald-700', active: true },
+    { id: 6, name: 'Bank AlJazira', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Bank_AlJazira_Logo.svg', initials: 'BAJ', gradient: 'from-cyan-500 to-blue-700', active: true },
+  ], []);
 
-  const defaultAirlines = [
-    { id: 1, name: 'Biman Bangladesh', logo: 'https://logo.clearbit.com/bfrmnl.biman-airlines.com', initials: 'BG', gradient: 'from-emerald-600 to-emerald-800', active: true },
-    { id: 2, name: 'Emirates', logo: 'https://logo.clearbit.com/emirates.com', initials: 'EK', gradient: 'from-red-500 to-red-700', active: true },
-    { id: 3, name: 'Singapore Airlines', logo: 'https://logo.clearbit.com/singaporeair.com', initials: 'SQ', gradient: 'from-blue-700 to-blue-900', active: true },
-    { id: 4, name: 'Qatar Airways', logo: 'https://logo.clearbit.com/qatarairways.com', initials: 'QR', gradient: 'from-purple-800 to-purple-950', active: true },
-    { id: 5, name: 'Thai Airways', logo: 'https://logo.clearbit.com/thaiairways.com', initials: 'TG', gradient: 'from-violet-600 to-violet-800', active: true },
-    { id: 6, name: 'Malaysia Airlines', logo: 'https://logo.clearbit.com/malaysiaairlines.com', initials: 'MH', gradient: 'from-red-600 to-red-800', active: true },
-  ];
+  const defaultAirlines = useMemo(() => [
+    { id: 1, name: 'Saudia', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Saudia_Logo.svg', initials: 'SV', gradient: 'from-emerald-600 to-emerald-800', active: true },
+    { id: 2, name: 'Emirates', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Emirates_logo.svg', initials: 'EK', gradient: 'from-red-500 to-red-700', active: true },
+    { id: 3, name: 'Qatar Airways', logo: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Qatar_Airways_logo.svg', initials: 'QR', gradient: 'from-purple-800 to-purple-950', active: true },
+    { id: 4, name: 'Etihad Airways', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Etihad_Airways_Logo.svg', initials: 'EY', gradient: 'from-amber-600 to-yellow-700', active: true },
+    { id: 5, name: 'Flynas', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Flynas_Logo.svg', initials: 'XY', gradient: 'from-blue-700 to-blue-900', active: true },
+    { id: 6, name: 'Flydubai', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Flydubai_logo.svg', initials: 'FZ', gradient: 'from-sky-500 to-blue-700', active: true },
+  ], []);
 
   const [partners, setPartners] = useState({ banks: defaultBanks, airlines: defaultAirlines });
 
   useEffect(() => {
-    const saved = localStorage.getItem('sitePartners');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Merge with defaults to ensure gradients exist
-      setPartners({
-        banks: parsed.banks?.map((p, i) => ({ ...defaultBanks[i], ...p, gradient: defaultBanks[i]?.gradient || 'from-gray-600 to-gray-800', initials: p.name?.substring(0, 2).toUpperCase() })) || defaultBanks,
-        airlines: parsed.airlines?.map((p, i) => ({ ...defaultAirlines[i], ...p, gradient: defaultAirlines[i]?.gradient || 'from-gray-600 to-gray-800', initials: p.name?.substring(0, 2).toUpperCase() })) || defaultAirlines
-      });
-    }
-  }, []);
+    const mergePartners = (parsed) => ({
+      banks: parsed.banks?.map((p, i) => ({ ...defaultBanks[i], ...p, gradient: defaultBanks[i]?.gradient || 'from-gray-600 to-gray-800', initials: defaultBanks[i]?.initials || p.name?.substring(0, 3).toUpperCase() })) || defaultBanks,
+      airlines: parsed.airlines?.map((p, i) => ({ ...defaultAirlines[i], ...p, gradient: defaultAirlines[i]?.gradient || 'from-gray-600 to-gray-800', initials: defaultAirlines[i]?.initials || p.name?.substring(0, 3).toUpperCase() })) || defaultAirlines
+    });
+
+    const fetchPartners = async () => {
+      try {
+        const response = await axios.get('/api/settings');
+        const apiPartners = response.data.data.partners;
+        setPartners(mergePartners(apiPartners));
+        localStorage.setItem('sitePartners', JSON.stringify(apiPartners));
+      } catch (error) {
+        const saved = localStorage.getItem('sitePartners');
+        if (saved) {
+          setPartners(mergePartners(JSON.parse(saved)));
+        }
+      }
+    };
+
+    fetchPartners();
+  }, [defaultAirlines, defaultBanks]);
 
   const bankPartners = partners.banks.filter(p => p.active);
   const airlinePartners = partners.airlines.filter(p => p.active);
@@ -98,7 +109,7 @@ const Partners = () => {
                 {partner.name}
               </span>
               <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                Partner
+                {language === 'bn' ? 'شريك' : 'Partner'}
               </span>
             </div>
           </motion.div>
@@ -135,15 +146,15 @@ const Partners = () => {
             className="inline-flex items-center px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 text-blue-500 text-sm font-semibold mb-6"
           >
             <Award className="w-4 h-4 mr-2" />
-            {language === 'bn' ? 'বিশ্বস্ত অংশীদার' : 'Trusted Partners'}
+            {language === 'bn' ? 'شركاء موثوقون' : 'Trusted Partners'}
             <Sparkles className="w-4 h-4 ml-2" />
           </motion.span>
           <h2 className={`text-4xl sm:text-5xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'bn' ? 'আমাদের অংশীদার' : 'Our Partners'}
+            {language === 'bn' ? 'شركاؤنا' : 'Our Partners'}
           </h2>
           <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {language === 'bn' 
-              ? 'বিশ্বের শীর্ষস্থানীয় ব্যাংক এবং এয়ারলাইন্সের সাথে আমাদের অংশীদারিত্ব'
+              ? 'نتعاون مع بنوك وشركات طيران موثوقة لتقديم تجربة سفر أكثر أمانًا وراحة'
               : 'Partnered with world-leading banks and airlines for your convenience'}
           </p>
         </motion.div>
@@ -153,7 +164,7 @@ const Partners = () => {
           <div className="flex items-center justify-center gap-3 mb-8">
             <Building2 className={`w-6 h-6 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
             <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>
-              {language === 'bn' ? 'ব্যাংক পার্টনার' : 'Banking Partners'}
+              {language === 'bn' ? 'شركاء الدفع والبنوك' : 'Banking Partners'}
             </h3>
           </div>
           <PartnerSlider partners={bankPartners} direction="left" />
@@ -164,7 +175,7 @@ const Partners = () => {
           <div className="flex items-center justify-center gap-3 mb-8">
             <Plane className={`w-6 h-6 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
             <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>
-              {language === 'bn' ? 'এয়ারলাইন পার্টনার' : 'Airline Partners'}
+              {language === 'bn' ? 'شركاء الطيران' : 'Airline Partners'}
             </h3>
           </div>
           <PartnerSlider partners={airlinePartners} direction="right" />

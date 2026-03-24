@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { formatSaudiRiyal } from '../utils/currency';
 
 const AIAgentContext = createContext();
+
+const formatAgentAmount = (value) => formatSaudiRiyal(value, {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+});
 
 export const useAIAgent = () => {
   const context = useContext(AIAgentContext);
@@ -326,8 +332,8 @@ export const AIAgentProvider = ({ children }) => {
       info.packages.forEach((pkg, i) => {
         const pkgName = language === 'bn' ? pkg.name_bn : pkg.name;
         response += language === 'bn'
-          ? `${i+1}. ${pkgName} (${pkg.days})\n   💰 ${pkg.price.toLocaleString()} টাকা\n   ✅ ${pkg.includes}\n\n`
-          : `${i+1}. ${pkgName} (${pkg.days})\n   💰 ${pkg.price.toLocaleString()} BDT\n   ✅ ${pkg.includes}\n\n`;
+          ? `${i+1}. ${pkgName} (${pkg.days})\n   💰 ${formatAgentAmount(pkg.price)}\n   ✅ ${pkg.includes}\n\n`
+          : `${i+1}. ${pkgName} (${pkg.days})\n   💰 ${formatAgentAmount(pkg.price)}\n   ✅ ${pkg.includes}\n\n`;
       });
       
       response += language === 'bn'
@@ -341,8 +347,8 @@ export const AIAgentProvider = ({ children }) => {
     // Handle booking intent
     if (lowerMessage.match(/(book|বুক|confirm|কনফার্ম|proceed|এগিয়ে)/)) {
       return language === 'bn'
-        ? '✅ বুকিং এগিয়ে নিতে আমাদের কিছু তথ্য দরকার:\n\n1. কতজন ভ্রমণ করবেন?\n2. ভ্রমণের তারিখ কবে?\n3. যোগাযোগের নম্বর?\n\nঅথবা সরাসরি কল করুন: +880 1234-567890'
-        : '✅ To proceed with booking, I need some details:\n\n1. How many travelers?\n2. Preferred travel dates?\n3. Contact number?\n\nOr call us directly: +880 1234-567890';
+        ? '✅ لإتمام الحجز نحتاج إلى بعض التفاصيل:\n\n1. كم عدد المسافرين؟\n2. ما تاريخ السفر المفضل؟\n3. ما رقم التواصل؟\n\nأو اتصلوا بنا مباشرة: +966 55 123 4567'
+        : '✅ To proceed with booking, I need some details:\n\n1. How many travelers?\n2. Preferred travel dates?\n3. Contact number?\n\nOr call us directly: +966 55 123 4567';
     }
 
     // Handle number of travelers
@@ -357,24 +363,24 @@ export const AIAgentProvider = ({ children }) => {
     // Greetings
     if (lowerMessage.match(/^(hi|hello|hey|হাই|হ্যালো|আসসালামু|assalamu)/)) {
       return language === 'bn' 
-        ? 'আসসালামু আলাইকুম! 🌟 Explore Holidays এ স্বাগতম। আমি আপনাকে সাহায্য করতে পারি:\n\n• হলিডে প্যাকেজ (মালদ্বীপ, থাইল্যান্ড, দুবাই)\n• ফ্লাইট বুকিং\n• ভিসা সেবা\n• হোটেল বুকিং\n\nকোথায় ভ্রমণ করতে চান?'
-        : 'Hello! 🌟 Welcome to Explore Holidays. I can help you with:\n\n• Holiday Packages (Maldives, Thailand, Dubai)\n• Flight Booking\n• Visa Services\n• Hotel Booking\n\nWhere would you like to travel?';
+        ? 'السلام عليكم! 🌟 أهلاً بكم في Sabir Travels. يمكنني مساعدتكم في:\n\n• باقات العطلات\n• حجز الرحلات الجوية\n• خدمات التأشيرات\n• حجوزات الفنادق\n\nإلى أين ترغبون في السفر؟'
+        : 'Hello! 🌟 Welcome to Sabir Travels. I can help you with:\n\n• Holiday Packages\n• Flight Booking\n• Visa Services\n• Hotel Booking\n\nWhere would you like to travel?';
     }
     
     // Package/tour queries
     if (lowerMessage.match(/(package|প্যাকেজ|tour|ট্যুর|holiday|হলিডে|vacation|ছুটি)/)) {
       setConversationContext(prev => ({ ...prev, topic: 'package' }));
       return language === 'bn' 
-        ? '🌍 আমাদের জনপ্রিয় প্যাকেজ:\n\n🏝️ মালদ্বীপ - ৫৫,০০০ টাকা থেকে\n🏖️ থাইল্যান্ড - ৪৫,০০০ টাকা থেকে\n🌆 দুবাই - ৬৫,০০০ টাকা থেকে\n🎡 সিঙ্গাপুর - ৫২,০০০ টাকা থেকে\n🏔️ মালয়েশিয়া - ৩৮,০০০ টাকা থেকে\n🕌 তুরস্ক - ৭৫,০০০ টাকা থেকে\n\nকোন দেশে যেতে চান? নাম বলুন বিস্তারিত জানতে।'
-        : '🌍 Our Popular Packages:\n\n🏝️ Maldives - from 55,000 BDT\n🏖️ Thailand - from 45,000 BDT\n🌆 Dubai - from 65,000 BDT\n🎡 Singapore - from 52,000 BDT\n🏔️ Malaysia - from 38,000 BDT\n🕌 Turkey - from 75,000 BDT\n\nWhich country interests you? Tell me to see detailed packages.';
+        ? `🌍 باقاتنا الأكثر طلباً:\n\n🏝️ المالديف - من ${formatAgentAmount(55000)}\n🏖️ تايلاند - من ${formatAgentAmount(45000)}\n🌆 دبي - من ${formatAgentAmount(65000)}\n🎡 سنغافورة - من ${formatAgentAmount(52000)}\n🏔️ ماليزيا - من ${formatAgentAmount(38000)}\n🕌 تركيا - من ${formatAgentAmount(75000)}\n\nما الوجهة التي تهمكم؟ اذكروا اسمها لأعرض التفاصيل.`
+        : `🌍 Our Popular Packages:\n\n🏝️ Maldives - from ${formatAgentAmount(55000)}\n🏖️ Thailand - from ${formatAgentAmount(45000)}\n🌆 Dubai - from ${formatAgentAmount(65000)}\n🎡 Singapore - from ${formatAgentAmount(52000)}\n🏔️ Malaysia - from ${formatAgentAmount(38000)}\n🕌 Turkey - from ${formatAgentAmount(75000)}\n\nWhich country interests you? Tell me to see detailed packages.`;
     }
     
     // Visa queries  
     if (lowerMessage.match(/(visa|ভিসা)/)) {
       setConversationContext(prev => ({ ...prev, topic: 'visa' }));
       return language === 'bn'
-        ? '📋 ভিসা সেবা:\n\n🇦🇪 UAE - ৫,০০০ টাকা (৩-৫ দিন)\n🇸🇬 সিঙ্গাপুর - ৪,৫০০ টাকা (৫-৭ দিন)\n🇹🇭 থাইল্যান্ড - ৪,০০০ টাকা (৩-৫ দিন)\n🇲🇾 মালয়েশিয়া - ৩,৫০০ টাকা (৪-৬ দিন)\n🇹🇷 তুরস্ক - ৭,০০০ টাকা (৭-১০ দিন)\n\nকোন দেশের ভিসা দরকার?'
-        : '📋 Visa Services:\n\n🇦🇪 UAE - 5,000 BDT (3-5 days)\n🇸🇬 Singapore - 4,500 BDT (5-7 days)\n🇹🇭 Thailand - 4,000 BDT (3-5 days)\n🇲🇾 Malaysia - 3,500 BDT (4-6 days)\n🇹🇷 Turkey - 7,000 BDT (7-10 days)\n\nWhich country visa do you need?';
+        ? `📋 خدمات التأشيرات:\n\n🇦🇪 الإمارات - ${formatAgentAmount(5000)} (3-5 أيام)\n🇸🇬 سنغافورة - ${formatAgentAmount(4500)} (5-7 أيام)\n🇹🇭 تايلاند - ${formatAgentAmount(4000)} (3-5 أيام)\n🇲🇾 ماليزيا - ${formatAgentAmount(3500)} (4-6 أيام)\n🇹🇷 تركيا - ${formatAgentAmount(7000)} (7-10 أيام)\n\nما الدولة التي تحتاجون تأشيرتها؟`
+        : `📋 Visa Services:\n\n🇦🇪 UAE - ${formatAgentAmount(5000)} (3-5 days)\n🇸🇬 Singapore - ${formatAgentAmount(4500)} (5-7 days)\n🇹🇭 Thailand - ${formatAgentAmount(4000)} (3-5 days)\n🇲🇾 Malaysia - ${formatAgentAmount(3500)} (4-6 days)\n🇹🇷 Turkey - ${formatAgentAmount(7000)} (7-10 days)\n\nWhich country visa do you need?`;
     }
     
     // Flight queries
@@ -403,16 +409,16 @@ export const AIAgentProvider = ({ children }) => {
     // Thank you / gratitude
     if (lowerMessage.match(/(thank|ধন্যবাদ|thanks|শুকরিয়া)/)) {
       return language === 'bn'
-        ? 'আপনাকেও ধন্যবাদ! 😊 আর কোনো সাহায্য লাগলে জানাবেন। Explore Holidays সবসময় আপনার সেবায়।'
-        : 'You\'re welcome! 😊 Let me know if you need any more help. Explore Holidays is always at your service.';
+        ? 'على الرحب والسعة! 😊 إذا احتجتم أي مساعدة إضافية فأخبروني. Sabir Travels دائماً في خدمتكم.'
+        : 'You\'re welcome! 😊 Let me know if you need any more help. Sabir Travels is always at your service.';
     }
     
     // Yes/confirmation
     if (lowerMessage.match(/^(yes|yeah|হ্যাঁ|জি|ok|ঠিক আছে|sure)/)) {
       if (conversationContext.topic === 'package' && conversationContext.destination) {
         return language === 'bn'
-          ? `চমৎকার! ${conversationContext.destination} বুকিং এর জন্য কল করুন: +880 1234-567890 অথবা আপনার ফোন নম্বর দিন, আমরা কল করব।`
-          : `Excellent! For ${conversationContext.destination} booking, call: +880 1234-567890 or share your number, we'll call you.`;
+          ? `ممتاز! لحجز ${conversationContext.destination} اتصلوا على: +966 55 123 4567 أو أرسلوا رقمكم وسنتواصل معكم.`
+          : `Excellent! For ${conversationContext.destination} booking, call: +966 55 123 4567 or share your number and we'll call you.`;
       }
       return language === 'bn'
         ? 'চমৎকার! কিভাবে এগিয়ে যেতে চান?'
@@ -422,8 +428,8 @@ export const AIAgentProvider = ({ children }) => {
     // Contact queries
     if (lowerMessage.match(/(contact|phone|call|যোগাযোগ|ফোন|কল|number|নম্বর)/)) {
       return language === 'bn'
-        ? '📞 যোগাযোগ:\n\n☎️ ফোন: +880 1234-567890\n📱 WhatsApp: +880 1234-567890\n📧 ইমেইল: info@exploreholidays.com\n🏢 অফিস: Gulshan-2, Dhaka\n\n⏰ সময়: সকাল ১০টা - রাত ৮টা (শুক্রবার বন্ধ)'
-        : '📞 Contact Us:\n\n☎️ Phone: +880 1234-567890\n📱 WhatsApp: +880 1234-567890\n📧 Email: info@exploreholidays.com\n🏢 Office: Gulshan-2, Dhaka\n\n⏰ Hours: 10 AM - 8 PM (Closed Friday)';
+        ? '📞 تواصلوا معنا:\n\n☎️ الهاتف: +966 55 123 4567\n📱 واتساب: +966 55 123 4567\n📧 البريد: info@sabirtravels.sa\n🏢 المكتب: شارع العليا، الرياض\n\n⏰ أوقات العمل: 10 صباحاً - 8 مساءً'
+        : '📞 Contact Us:\n\n☎️ Phone: +966 55 123 4567\n📱 WhatsApp: +966 55 123 4567\n📧 Email: info@sabirtravels.sa\n🏢 Office: Olaya Street, Riyadh\n\n⏰ Hours: 10 AM - 8 PM';
     }
     
     // Default - check if it might be a destination name or follow-up
@@ -436,8 +442,8 @@ export const AIAgentProvider = ({ children }) => {
     
     // Default response
     return language === 'bn' 
-      ? 'আমি Explore Holidays এ কাজ করি। 🌟\n\nআমি সাহায্য করতে পারি:\n• হলিডে প্যাকেজ\n• ফ্লাইট বুকিং\n• ভিসা সেবা\n• হোটেল বুকিং\n\nকিভাবে সাহায্য করতে পারি?'
-      : 'I work at Explore Holidays. 🌟\n\nI can help with:\n• Holiday Packages\n• Flight Booking\n• Visa Services\n• Hotel Booking\n\nHow can I assist you?';
+      ? 'أنا من Sabir Travels. 🌟\n\nيمكنني المساعدة في:\n• باقات العطلات\n• حجز الرحلات الجوية\n• خدمات التأشيرات\n• حجوزات الفنادق\n\nكيف يمكنني مساعدتكم؟'
+      : 'I work at Sabir Travels. 🌟\n\nI can help with:\n• Holiday Packages\n• Flight Booking\n• Visa Services\n• Hotel Booking\n\nHow can I assist you?';
   }, [conversationContext]);
 
   // Send message to AI agent via backend

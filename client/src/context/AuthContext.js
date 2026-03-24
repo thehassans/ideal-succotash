@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
+const AUTH_TOKEN_KEY = 'authToken';
+const USER_STORAGE_KEY = 'user';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -14,86 +17,102 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const persistAuth = (token, userData) => {
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+    setUser(userData);
+  };
+
+  const clearAuth = () => {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
+    setUser(null);
+  };
+
   useEffect(() => {
-    // Check for stored user on mount
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+      const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
+      }
+
+      if (!storedToken) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${storedToken}`
+          }
+        });
+
+        const currentUser = response.data.data.user;
+        setUser(currentUser);
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
+      } catch (error) {
+        clearAuth();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (email, password) => {
     try {
-      // In production, this would be an API call
-      // For demo, we'll simulate authentication
-      const mockUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const foundUser = mockUsers.find(u => u.email === email && u.password === password);
-      
-      if (foundUser) {
-        const userData = {
-          id: foundUser.id,
-          name: foundUser.name,
-          email: foundUser.email,
-          avatar: foundUser.avatar,
-          provider: foundUser.provider || 'email'
-        };
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        return { success: true };
-      }
-      return { success: false, error: 'Invalid email or password' };
+      const response = await axios.post('/api/auth/login', { email, password });
+      const { token, user: userData } = response.data.data;
+
+      persistAuth(token, userData);
+
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error.response?.data?.error || error.message };
     }
   };
 
   const signup = async (name, email, password, phone = '') => {
     try {
-      const mockUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      
-      // Check if user exists
-      if (mockUsers.find(u => u.email === email)) {
-        return { success: false, error: 'Email already registered' };
-      }
+      const response = await axios.post('/api/auth/signup', { name, email, password, phone });
+      const { token, user: userData } = response.data.data;
 
-      const newUser = {
-        id: Date.now().toString(),
-        name,
-        email,
-        phone,
-        password,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`,
-        provider: 'email',
-        createdAt: new Date().toISOString()
-      };
+      persistAuth(token, userData);
 
-      mockUsers.push(newUser);
-      localStorage.setItem('registeredUsers', JSON.stringify(mockUsers));
-
-      const userData = {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        avatar: newUser.avatar,
-        provider: 'email'
-      };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error.response?.data?.error || error.message };
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const logout = async () => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+
+    try {
+      if (token) {
+        await axios.post('/api/auth/logout', {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      }
+    } catch (error) {
+    } finally {
+      clearAuth();
+    }
   };
 
-  const getAllUsers = () => {
-    return JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+  const getAllUsers = async () => {
+    const response = await axios.get('/api/auth/users');
+    return response.data.data;
   };
 
   const value = {
@@ -103,6 +122,7 @@ export const AuthProvider = ({ children }) => {
     signup,
     logout,
     getAllUsers,
+    authToken: localStorage.getItem(AUTH_TOKEN_KEY),
     isAuthenticated: !!user
   };
 

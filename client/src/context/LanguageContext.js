@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatCurrencyAmount } from '../utils/currency';
 
 const LanguageContext = createContext();
 
@@ -15,7 +16,7 @@ export const LanguageProvider = ({ children }) => {
   const { i18n } = useTranslation();
   const [language, setLanguage] = useState(() => {
     const saved = localStorage.getItem('language');
-    return saved || 'en';
+    return saved === 'ar' ? 'bn' : (saved || 'bn');
   });
 
   useEffect(() => {
@@ -24,9 +25,13 @@ export const LanguageProvider = ({ children }) => {
     
     // Update document direction and font for Bangla
     if (language === 'bn') {
-      document.documentElement.classList.add('font-bangla');
+      document.documentElement.classList.add('font-arabic');
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
     } else {
-      document.documentElement.classList.remove('font-bangla');
+      document.documentElement.classList.remove('font-arabic');
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'en';
     }
   }, [language, i18n]);
 
@@ -35,35 +40,30 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const changeLanguage = (lang) => {
-    setLanguage(lang);
+    setLanguage(lang === 'ar' ? 'bn' : lang);
   };
 
   // Currency formatting for Bangladesh with ৳ symbol
-  const formatCurrency = (amount, currency = 'BDT') => {
-    if (currency === 'BDT') {
-      const formattedNumber = new Intl.NumberFormat(language === 'bn' ? 'bn-BD' : 'en-BD', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(amount);
-      return `৳ ${formattedNumber}`;
-    }
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency
-    }).format(amount);
+  const formatCurrency = (amount, currency = 'SAR') => {
+    return formatCurrencyAmount(amount, {
+      language,
+      currencyCode: currency
+    });
   };
 
   // Format number for Bangladesh
   const formatNumber = (num) => {
-    return new Intl.NumberFormat(language === 'bn' ? 'bn-BD' : 'en-BD').format(num);
+    return new Intl.NumberFormat(language === 'bn' ? 'ar-SA' : 'en-SA').format(num);
   };
 
   const value = {
     language,
+    resolvedLanguage: language === 'bn' ? 'ar' : language,
     setLanguage: changeLanguage,
     toggleLanguage,
     isEnglish: language === 'en',
     isBangla: language === 'bn',
+    isArabic: language === 'bn',
     formatCurrency,
     formatNumber
   };

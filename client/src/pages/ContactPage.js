@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { 
@@ -24,12 +25,25 @@ const ContactPage = () => {
   const { language } = useLanguage();
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
+
+    try {
+      setSubmitting(true);
+      await axios.post('/api/inquiries', {
+        ...formData,
+        source: 'contact'
+      });
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      setTimeout(() => setIsSubmitted(false), 3000);
+    } catch (error) {
+      alert(language === 'bn' ? 'মেসেজ পাঠানো যায়নি' : 'Failed to send message');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -324,7 +338,7 @@ const ContactPage = () => {
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    disabled={isSubmitted}
+                    disabled={isSubmitted || submitting}
                     className={`w-full py-5 font-bold text-lg rounded-2xl flex items-center justify-center shadow-xl transition-all ${
                       isSubmitted 
                         ? 'bg-green-500 text-white' 
@@ -335,6 +349,11 @@ const ContactPage = () => {
                       <>
                         <CheckCircle className="w-6 h-6 mr-2" />
                         {language === 'bn' ? 'মেসেজ পাঠানো হয়েছে!' : 'Message Sent!'}
+                      </>
+                    ) : submitting ? (
+                      <>
+                        <Send className="w-6 h-6 mr-2 animate-pulse" />
+                        {language === 'bn' ? 'পাঠানো হচ্ছে...' : 'Sending...'}
                       </>
                     ) : (
                       <>

@@ -19,13 +19,17 @@ const AdminUsers = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    const loadUsers = async () => {
+      try {
+        const allUsers = await getAllUsers();
+        setUsers(allUsers);
+      } catch (error) {
+        setUsers([]);
+      }
+    };
 
-  const loadUsers = () => {
-    const allUsers = getAllUsers();
-    setUsers(allUsers);
-  };
+    loadUsers();
+  }, [getAllUsers]);
 
   const filteredUsers = users.filter(user => 
     user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||

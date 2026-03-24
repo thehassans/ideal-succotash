@@ -23,49 +23,49 @@ const WhyChooseUs = () => {
     {
       icon: Shield,
       title: 'Secure Booking',
-      title_bn: 'নিরাপদ বুকিং',
+      title_bn: 'حجز آمن',
       description: 'Your payment and personal data are protected with industry-leading security',
-      description_bn: 'আপনার পেমেন্ট এবং ব্যক্তিগত তথ্য শিল্প-নেতৃস্থানীয় নিরাপত্তার সাথে সুরক্ষিত',
+      description_bn: 'نحمي بياناتك ومدفوعاتك بأعلى معايير الأمان الموثوقة في قطاع السفر',
       color: 'from-green-500 to-emerald-500'
     },
     {
       icon: Award,
       title: 'Best Price Guarantee',
-      title_bn: 'সেরা মূল্যের নিশ্চয়তা',
+      title_bn: 'ضمان أفضل سعر',
       description: 'We offer the most competitive prices with price match guarantee',
-      description_bn: 'আমরা মূল্য মিলের গ্যারান্টি সহ সবচেয়ে প্রতিযোগিতামূলক মূল্য অফার করি',
+      description_bn: 'نوفر أسعارًا تنافسية مع التزام واضح بأفضل قيمة لرحلتك',
       color: 'from-yellow-500 to-orange-500'
     },
     {
       icon: HeadphonesIcon,
       title: '24/7 Support',
-      title_bn: '২৪/৭ সহায়তা',
+      title_bn: 'دعم على مدار الساعة',
       description: 'Our dedicated support team is available round the clock to assist you',
-      description_bn: 'আমাদের নিবেদিত সহায়তা দল আপনাকে সহায়তা করতে সর্বদা উপলব্ধ',
+      description_bn: 'فريق الدعم لدينا جاهز لمساعدتك في أي وقت قبل السفر وأثناءه وبعده',
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Clock,
       title: 'Easy Booking',
-      title_bn: 'সহজ বুকিং',
+      title_bn: 'حجز سهل وسريع',
       description: 'Book your travel in just a few clicks with our user-friendly platform',
-      description_bn: 'আমাদের ব্যবহারকারী-বান্ধব প্ল্যাটফর্মে মাত্র কয়েকটি ক্লিকে আপনার ভ্রমণ বুক করুন',
+      description_bn: 'احجز رحلتك بخطوات بسيطة عبر منصة واضحة وسهلة الاستخدام',
       color: 'from-purple-500 to-indigo-500'
     },
     {
       icon: CreditCard,
       title: 'Flexible Payment',
-      title_bn: 'নমনীয় পেমেন্ট',
+      title_bn: 'خيارات دفع مرنة',
       description: 'Multiple payment options including EMI and mobile banking',
-      description_bn: 'ইএমআই এবং মোবাইল ব্যাংকিং সহ একাধিক পেমেন্ট অপশন',
+      description_bn: 'نوفر وسائل دفع متعددة تناسب الأفراد والعائلات والعملاء من الشركات',
       color: 'from-pink-500 to-rose-500'
     },
     {
       icon: MapPin,
       title: 'Expert Guidance',
-      title_bn: 'বিশেষজ্ঞ গাইডেন্স',
+      title_bn: 'استشارات سفر احترافية',
       description: 'Travel experts with local knowledge to plan your perfect trip',
-      description_bn: 'আপনার নিখুঁত ট্রিপ পরিকল্পনা করতে স্থানীয় জ্ঞান সহ ভ্রমণ বিশেষজ্ঞ',
+      description_bn: 'خبراء سفر يساعدونك على تخطيط برنامج مناسب لميزانيتك ووجهتك',
       color: 'from-teal-500 to-cyan-500'
     }
   ];
@@ -98,16 +98,16 @@ const WhyChooseUs = () => {
             className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold mb-6 ${useGradients ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 text-green-500' : 'bg-slate-900 text-white border-0'}`}
           >
             <CheckCircle className="w-4 h-4 mr-2" />
-            {language === 'bn' ? 'আমাদের সুবিধা' : 'Our Benefits'}
+            {language === 'bn' ? 'مزايا السفر معنا' : 'Our Benefits'}
             <Sparkles className="w-4 h-4 ml-2" />
           </motion.span>
           <h2 className={`text-4xl sm:text-5xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'bn' ? 'কেন আমাদের বেছে নেবেন?' : 'Why Choose Us?'}
+            {language === 'bn' ? 'لماذا تختار Sabir Travels؟' : 'Why Choose Us?'}
           </h2>
           <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {language === 'bn' 
-              ? 'বাংলাদেশের সবচেয়ে বিশ্বস্ত ট্রাভেল এজেন্সি হিসেবে আমরা আপনার ভ্রমণকে অবিস্মরণীয় করে তুলি'
-              : "As Bangladesh's most trusted travel agency, we make your journey unforgettable"}
+              ? 'نجمع بين الخبرة المحلية والخدمة السريعة والعروض المناسبة لنصنع لك تجربة سفر مريحة وموثوقة'
+              : 'We combine trusted expertise, fast support, and competitive offers to make every journey smoother'}
           </p>
         </motion.div>
 
@@ -170,10 +170,10 @@ const WhyChooseUs = () => {
           className="mt-16 flex flex-wrap justify-center gap-8 lg:gap-16"
         >
           {[
-            { number: '10+', label: language === 'bn' ? 'বছরের অভিজ্ঞতা' : 'Years Experience' },
-            { number: '50K+', label: language === 'bn' ? 'সুখী গ্রাহক' : 'Happy Customers' },
-            { number: '100+', label: language === 'bn' ? 'গন্তব্য' : 'Destinations' },
-            { number: '99%', label: language === 'bn' ? 'সন্তুষ্টি' : 'Satisfaction' },
+            { number: '10+', label: language === 'bn' ? 'سنوات من الخبرة' : 'Years Experience' },
+            { number: '50K+', label: language === 'bn' ? 'عميل سعيد' : 'Happy Customers' },
+            { number: '100+', label: language === 'bn' ? 'وجهة' : 'Destinations' },
+            { number: '99%', label: language === 'bn' ? 'رضا العملاء' : 'Satisfaction' },
           ].map((stat, index) => (
             <motion.div
               key={index}

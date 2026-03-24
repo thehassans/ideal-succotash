@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Package, Edit2, Check, X } from 'lucide-react';
 import axios from 'axios';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AdminBookings = () => {
   // Theme state
@@ -24,6 +25,7 @@ const AdminBookings = () => {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
+  const { formatCurrency } = useLanguage();
 
   useEffect(() => {
     fetchBookings();
@@ -139,7 +141,7 @@ const AdminBookings = () => {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className="text-white font-semibold">৳{booking.totalAmount.toLocaleString()}</span>
+                        <span className="text-white font-semibold">{formatCurrency(booking.totalAmount || booking.amount || 0)}</span>
                         <p className="text-gray-400 text-sm">{booking.persons} persons</p>
                       </td>
                       <td className="p-4">

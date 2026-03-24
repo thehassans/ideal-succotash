@@ -6,6 +6,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+ const { initializeDatabase, testConnection } = require('./config/database');
 
 const app = express();
 
@@ -41,6 +42,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/inquiries', require('./routes/inquiries'));
+app.use('/api/settings', require('./routes/settings'));
 app.use('/api/packages', require('./routes/packages'));
 app.use('/api/flights', require('./routes/flights'));
 app.use('/api/services', require('./routes/services'));
@@ -80,8 +85,18 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Explore Holidays Server running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 URL: ${process.env.APP_URL || `http://localhost:${PORT}`}`);
-});
+ async function startServer() {
+   await testConnection();
+   await initializeDatabase();
+
+   app.listen(PORT, () => {
+     console.log(`🚀 Explore Holidays Server running on port ${PORT}`);
+     console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+     console.log(`🌐 URL: ${process.env.APP_URL || `http://localhost:${PORT}`}`);
+   });
+ }
+
+ startServer().catch((error) => {
+   console.error('❌ Failed to start server:', error.message);
+   process.exit(1);
+ });

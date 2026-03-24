@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { 
   Plane, 
@@ -30,7 +29,6 @@ const iconMap = {
 };
 
 const LatestServices = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { language } = useLanguage();
@@ -49,64 +47,64 @@ const LatestServices = () => {
         setServices([
           {
             id: 1,
-            title: "Flight Booking",
-            title_bn: "ফ্লাইট বুকিং",
-            description: "Book domestic and international flights at best prices",
-            description_bn: "সেরা মূল্যে দেশীয় এবং আন্তর্জাতিক ফ্লাইট বুক করুন",
+            title: 'Flight Booking',
+            title_bn: 'حجز الرحلات',
+            description: 'Book domestic and international flights at best prices',
+            description_bn: 'احجز الرحلات الداخلية والدولية بأسعار تنافسية وخدمة موثوقة',
             icon: "Plane",
             path: "/flights"
           },
           {
             id: 2,
-            title: "Holiday Packages",
-            title_bn: "হলিডে প্যাকেজ",
-            description: "Curated holiday packages for every budget",
-            description_bn: "প্রতিটি বাজেটের জন্য বিশেষভাবে সাজানো হলিডে প্যাকেজ",
+            title: 'Holiday Packages',
+            title_bn: 'باقات العطلات',
+            description: 'Curated holiday packages for every budget',
+            description_bn: 'باقات عطلات مصممة بعناية لتناسب مختلف الميزانيات والأذواق',
             icon: "Palmtree",
             path: "/holidays"
           },
           {
             id: 3,
-            title: "Visa Services",
-            title_bn: "ভিসা সেবা",
-            description: "Hassle-free visa processing for all countries",
-            description_bn: "সব দেশের জন্য ঝামেলামুক্ত ভিসা প্রসেসিং",
+            title: 'Visa Services',
+            title_bn: 'خدمات التأشيرات',
+            description: 'Hassle-free visa processing for all countries',
+            description_bn: 'إجراءات تأشيرات سلسة ومنظمة لمختلف الدول والوجهات',
             icon: "FileCheck",
             path: "/visas"
           },
           {
             id: 4,
-            title: "Hotel Booking",
-            title_bn: "হোটেল বুকিং",
-            description: "Premium hotels and resorts worldwide",
-            description_bn: "বিশ্বব্যাপী প্রিমিয়াম হোটেল এবং রিসোর্ট",
+            title: 'Hotel Booking',
+            title_bn: 'حجز الفنادق',
+            description: 'Premium hotels and resorts worldwide',
+            description_bn: 'فنادق ومنتجعات مختارة حول العالم لإقامة مريحة وفاخرة',
             icon: "Building2",
             path: "/services/hotels"
           },
           {
             id: 5,
-            title: "Travel Insurance",
-            title_bn: "ভ্রমণ বীমা",
-            description: "Comprehensive travel insurance coverage",
-            description_bn: "ব্যাপক ভ্রমণ বীমা কভারেজ",
+            title: 'Travel Insurance',
+            title_bn: 'تأمين السفر',
+            description: 'Comprehensive travel insurance coverage',
+            description_bn: 'خطط تأمين سفر شاملة تمنحك راحة أكبر أثناء رحلتك',
             icon: "Shield",
             path: "/services/insurance"
           },
           {
             id: 6,
-            title: "Car Rental",
-            title_bn: "গাড়ি ভাড়া",
-            description: "Comfortable transportation options",
-            description_bn: "আরামদায়ক পরিবহন অপশন",
+            title: 'Car Rental',
+            title_bn: 'تأجير السيارات',
+            description: 'Comfortable transportation options',
+            description_bn: 'خيارات تنقل مريحة ومرنة تناسب الأفراد والعائلات',
             icon: "Car",
             path: "/services/car-rental"
           },
           {
             id: 7,
-            title: "Tour Guide",
-            title_bn: "ট্যুর গাইড",
-            description: "Expert local guides for memorable trips",
-            description_bn: "স্মরণীয় ট্রিপের জন্য বিশেষজ্ঞ স্থানীয় গাইড",
+            title: 'Tour Guide',
+            title_bn: 'مرشد سياحي',
+            description: 'Expert local guides for memorable trips',
+            description_bn: 'مرشدون محترفون يساعدونك على الاستمتاع بكل لحظة من رحلتك',
             icon: "Users",
             path: "/services/tour-guide"
           }
@@ -165,15 +163,15 @@ const LatestServices = () => {
             className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold mb-6 ${useGradients ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 text-cyan-500' : 'bg-slate-900 text-white border-0'}`}
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            {language === 'bn' ? 'আমাদের সেবা' : 'Our Services'}
+            {language === 'bn' ? 'خدماتنا' : 'Our Services'}
             <Star className="w-4 h-4 ml-2 fill-current" />
           </motion.span>
           <h2 className={`text-4xl sm:text-5xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'bn' ? 'প্রিমিয়াম ট্রাভেল সেবা' : 'Premium Travel Services'}
+            {language === 'bn' ? 'خدمات سفر متكاملة' : 'Premium Travel Services'}
           </h2>
           <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {language === 'bn' 
-              ? 'আপনার ভ্রমণকে অবিস্মরণীয় করতে আমাদের বিশ্বমানের সেবাসমূহ'
+              ? 'نوفر لك حلول سفر متكاملة تبدأ من الحجز وتنتهي بتجربة سفر مريحة وآمنة'
               : 'World-class services to make your travel experience unforgettable'}
           </p>
         </motion.div>
@@ -243,7 +241,7 @@ const LatestServices = () => {
                       useGradients ? `bg-gradient-to-r ${gradient}` : 'bg-primary-500 hover:bg-primary-600'
                     }`}
                   >
-                    {language === 'bn' ? 'আরও দেখুন' : 'Learn More'}
+                    {language === 'bn' ? 'اعرف المزيد' : 'Learn More'}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </button>
 
@@ -276,11 +274,11 @@ const LatestServices = () => {
             </motion.div>
             
             <h3 className="text-3xl lg:text-4xl font-black text-white mb-4">
-              {language === 'bn' ? 'আপনার স্বপ্নের ছুটি পরিকল্পনা করতে প্রস্তুত?' : 'Ready to Plan Your Dream Vacation?'}
+              {language === 'bn' ? 'هل أنت جاهز لتخطيط رحلتك القادمة؟' : 'Ready to Plan Your Dream Vacation?'}
             </h3>
             <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
               {language === 'bn' 
-                ? 'আমাদের ভ্রমণ বিশেষজ্ঞরা আপনার জন্য সেরা ট্যুর তৈরি করতে প্রস্তুত'
+                ? 'فريق Sabir Travels جاهز لتصميم برنامج سفر يناسب احتياجاتك وميزانيتك'
                 : 'Our travel experts are ready to create the perfect tour for you'}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -288,14 +286,14 @@ const LatestServices = () => {
                 onClick={() => navigate('/contact')}
                 className="group px-10 py-4 bg-white text-blue-600 font-bold rounded-2xl hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl flex items-center cursor-pointer"
               >
-                {language === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
+                {language === 'bn' ? 'تواصل معنا' : 'Contact Us'}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => navigate('/holidays')}
                 className="px-10 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-2xl hover:bg-white/20 transition-all border-2 border-white/30 hover:border-white/50 cursor-pointer"
               >
-                {language === 'bn' ? 'প্যাকেজ দেখুন' : 'Browse Packages'}
+                {language === 'bn' ? 'تصفح الباقات' : 'Browse Packages'}
               </button>
             </div>
           </div>

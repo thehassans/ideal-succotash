@@ -99,16 +99,20 @@ router.get('/visas', (req, res) => {
 router.get('/partners', (req, res) => {
   const partners = {
     banks: [
-      { name: 'BRAC Bank', logo: 'https://via.placeholder.com/120x60?text=BRAC+Bank' },
-      { name: 'Dutch Bangla Bank', logo: 'https://via.placeholder.com/120x60?text=DBBL' },
-      { name: 'City Bank', logo: 'https://via.placeholder.com/120x60?text=City+Bank' },
-      { name: 'Eastern Bank', logo: 'https://via.placeholder.com/120x60?text=EBL' }
+      { name: 'Al Rajhi Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Al_Rajhi_Bank_Logo.svg' },
+      { name: 'Saudi National Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/68/SNB_Logo.svg' },
+      { name: 'Riyad Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Riyad_Bank_logo.svg' },
+      { name: 'SAB', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/SABB_logo.svg' },
+      { name: 'Alinma Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/39/Alinma_Bank.svg' },
+      { name: 'Bank AlJazira', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Bank_AlJazira_Logo.svg' }
     ],
     airlines: [
-      { name: 'Biman Bangladesh', logo: 'https://via.placeholder.com/120x60?text=Biman' },
-      { name: 'Emirates', logo: 'https://via.placeholder.com/120x60?text=Emirates' },
-      { name: 'Singapore Airlines', logo: 'https://via.placeholder.com/120x60?text=SQ' },
-      { name: 'Qatar Airways', logo: 'https://via.placeholder.com/120x60?text=Qatar' }
+      { name: 'Saudia', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Saudia_Logo.svg' },
+      { name: 'Emirates', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Emirates_logo.svg' },
+      { name: 'Qatar Airways', logo: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Qatar_Airways_logo.svg' },
+      { name: 'Etihad Airways', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Etihad_Airways_Logo.svg' },
+      { name: 'Flynas', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Flynas_Logo.svg' },
+      { name: 'Flydubai', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Flydubai_logo.svg' }
     ]
   };
   

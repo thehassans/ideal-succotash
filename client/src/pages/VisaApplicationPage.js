@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { 
-  FileCheck, Clock, CheckCircle, ArrowLeft, ArrowRight, Upload, 
-  User, Mail, Phone, Calendar, Globe, Building, CreditCard,
-  Shield, AlertCircle, Sparkles, Check
+  FileCheck, CheckCircle, ArrowLeft, ArrowRight,
+  User, Phone, Globe,
+  Shield, AlertCircle, Check
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingContext';
-import { useGradient } from '../context/GradientContext';
 
 const VisaApplicationPage = () => {
   const { country } = useParams();
-  const navigate = useNavigate();
   const { isDark } = useTheme();
   const { language, formatCurrency } = useLanguage();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { addBooking } = useBooking();
-  const { useGradients } = useGradient();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -125,7 +122,7 @@ const VisaApplicationPage = () => {
     passportNumber: '',
     passportExpiry: '',
     dateOfBirth: '',
-    nationality: 'Bangladeshi',
+    nationality: 'Saudi',
     travelDate: '',
     returnDate: '',
     purpose: 'Tourism',
@@ -190,10 +187,10 @@ const VisaApplicationPage = () => {
   };
 
   const steps = [
-    { id: 1, title: 'Personal Info', icon: User },
-    { id: 2, title: 'Passport Details', icon: FileCheck },
-    { id: 3, title: 'Travel Info', icon: Globe },
-    { id: 4, title: 'Review & Submit', icon: CheckCircle },
+    { id: 1, title: language === 'bn' ? 'البيانات الشخصية' : 'Personal Info', icon: User },
+    { id: 2, title: language === 'bn' ? 'بيانات الجواز' : 'Passport Details', icon: FileCheck },
+    { id: 3, title: language === 'bn' ? 'معلومات الرحلة' : 'Travel Info', icon: Globe },
+    { id: 4, title: language === 'bn' ? 'المراجعة والإرسال' : 'Review & Submit', icon: CheckCircle },
   ];
 
   if (submitted) {
@@ -208,22 +205,24 @@ const VisaApplicationPage = () => {
             <Check className="w-12 h-12 text-white" />
           </motion.div>
           <h1 className={`text-3xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Application Submitted Successfully!
+            {language === 'bn' ? 'تم إرسال الطلب بنجاح!' : 'Application Submitted Successfully!'}
           </h1>
           <p className={`text-lg mb-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            Your visa application for {visa.country} has been received. Our team will contact you within 24 hours.
+            {language === 'bn'
+              ? `تم استلام طلب تأشيرتك إلى ${visa.country}. سيتواصل معك فريقنا خلال 24 ساعة.`
+              : `Your visa application for ${visa.country} has been received. Our team will contact you within 24 hours.`}
           </p>
           <div className={`p-6 rounded-2xl mb-8 ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-xl`}>
             <div className="flex items-center justify-between mb-4">
-              <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Application ID</span>
+              <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'رقم الطلب' : 'Application ID'}</span>
               <span className={`font-mono font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 #VIS{Date.now().toString().slice(-8)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Status</span>
+              <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الحالة' : 'Status'}</span>
               <span className="px-3 py-1 bg-yellow-500/20 text-yellow-500 rounded-full text-sm font-medium">
-                Processing
+                {language === 'bn' ? 'قيد المعالجة' : 'Processing'}
               </span>
             </div>
           </div>
@@ -232,7 +231,7 @@ const VisaApplicationPage = () => {
               to="/visas"
               className="px-6 py-3 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors"
             >
-              Back to Visas
+              {language === 'bn' ? 'العودة إلى التأشيرات' : 'Back to Visas'}
             </Link>
             <Link
               to="/"
@@ -240,7 +239,7 @@ const VisaApplicationPage = () => {
                 isDark ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               }`}
             >
-              Go Home
+              {language === 'bn' ? 'العودة للرئيسية' : 'Go Home'}
             </Link>
           </div>
         </div>
@@ -251,7 +250,7 @@ const VisaApplicationPage = () => {
   return (
     <>
       <Helmet>
-        <title>Apply for {visa.country} Visa | Explore Holidays</title>
+        <title>Apply for {visa.country} Visa | Sabir Travels</title>
       </Helmet>
 
       {/* Hero Section */}
@@ -263,7 +262,7 @@ const VisaApplicationPage = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link to="/visas" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Visa Services
+            {language === 'bn' ? 'العودة إلى خدمات التأشيرات' : 'Back to Visa Services'}
           </Link>
           
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
@@ -271,7 +270,7 @@ const VisaApplicationPage = () => {
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-6xl">{visa.flag}</span>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-bold text-white">{visa.country} Visa</h1>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-white">{language === 'bn' ? `تأشيرة ${visa.country}` : `${visa.country} Visa`}</h1>
                   <p className="text-white/70 text-lg">{visa.visaType}</p>
                 </div>
               </div>
@@ -279,15 +278,15 @@ const VisaApplicationPage = () => {
             
             <div className="flex flex-wrap gap-4">
               <div className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-xl">
-                <p className="text-white/60 text-sm">Processing</p>
+                <p className="text-white/60 text-sm">{language === 'bn' ? 'المعالجة' : 'Processing'}</p>
                 <p className="text-white font-bold">{visa.processing}</p>
               </div>
               <div className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-xl">
-                <p className="text-white/60 text-sm">Validity</p>
+                <p className="text-white/60 text-sm">{language === 'bn' ? 'الصلاحية' : 'Validity'}</p>
                 <p className="text-white font-bold">{visa.validity}</p>
               </div>
               <div className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl">
-                <p className="text-white/80 text-sm">Total Fee</p>
+                <p className="text-white/80 text-sm">{language === 'bn' ? 'إجمالي الرسوم' : 'Total Fee'}</p>
                 <p className="text-white font-bold text-xl">{formatCurrency(visa.price)}</p>
               </div>
             </div>
@@ -347,13 +346,13 @@ const VisaApplicationPage = () => {
                       className="space-y-6"
                     >
                       <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        Personal Information
+                        {language === 'bn' ? 'المعلومات الشخصية' : 'Personal Information'}
                       </h2>
                       
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Full Name (as per passport) *
+                            {language === 'bn' ? 'الاسم الكامل حسب الجواز *' : 'Full Name (as per passport) *'}
                           </label>
                           <input
                             type="text"
@@ -370,7 +369,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Email Address *
+                            {language === 'bn' ? 'البريد الإلكتروني *' : 'Email Address *'}
                           </label>
                           <input
                             type="email"
@@ -387,7 +386,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Phone Number *
+                            {language === 'bn' ? 'رقم الهاتف *' : 'Phone Number *'}
                           </label>
                           <input
                             type="tel"
@@ -404,7 +403,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Date of Birth *
+                            {language === 'bn' ? 'تاريخ الميلاد *' : 'Date of Birth *'}
                           </label>
                           <input
                             type="date"
@@ -431,13 +430,13 @@ const VisaApplicationPage = () => {
                       className="space-y-6"
                     >
                       <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        Passport Details
+                        {language === 'bn' ? 'بيانات جواز السفر' : 'Passport Details'}
                       </h2>
                       
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Passport Number *
+                            {language === 'bn' ? 'رقم الجواز *' : 'Passport Number *'}
                           </label>
                           <input
                             type="text"
@@ -454,7 +453,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Passport Expiry Date *
+                            {language === 'bn' ? 'تاريخ انتهاء الجواز *' : 'Passport Expiry Date *'}
                           </label>
                           <input
                             type="date"
@@ -471,7 +470,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div className="md:col-span-2">
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Nationality *
+                            {language === 'bn' ? 'الجنسية *' : 'Nationality *'}
                           </label>
                           <select
                             name="nationality"
@@ -483,10 +482,10 @@ const VisaApplicationPage = () => {
                                 : 'bg-white border-gray-200 text-gray-900 focus:border-primary-500'
                             }`}
                           >
-                            <option value="Bangladeshi">Bangladeshi</option>
-                            <option value="Indian">Indian</option>
-                            <option value="Pakistani">Pakistani</option>
-                            <option value="Other">Other</option>
+                            <option value="Saudi">{language === 'bn' ? 'سعودي' : 'Saudi'}</option>
+                            <option value="Indian">{language === 'bn' ? 'هندي' : 'Indian'}</option>
+                            <option value="Pakistani">{language === 'bn' ? 'باكستاني' : 'Pakistani'}</option>
+                            <option value="Other">{language === 'bn' ? 'أخرى' : 'Other'}</option>
                           </select>
                         </div>
                       </div>
@@ -501,13 +500,13 @@ const VisaApplicationPage = () => {
                       className="space-y-6"
                     >
                       <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        Travel Information
+                        {language === 'bn' ? 'معلومات الرحلة' : 'Travel Information'}
                       </h2>
                       
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Travel Date *
+                            {language === 'bn' ? 'تاريخ السفر *' : 'Travel Date *'}
                           </label>
                           <input
                             type="date"
@@ -524,7 +523,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Return Date *
+                            {language === 'bn' ? 'تاريخ العودة *' : 'Return Date *'}
                           </label>
                           <input
                             type="date"
@@ -541,7 +540,7 @@ const VisaApplicationPage = () => {
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Purpose of Visit *
+                            {language === 'bn' ? 'الغرض من الزيارة *' : 'Purpose of Visit *'}
                           </label>
                           <select
                             name="purpose"
@@ -553,23 +552,23 @@ const VisaApplicationPage = () => {
                                 : 'bg-white border-gray-200 text-gray-900 focus:border-primary-500'
                             }`}
                           >
-                            <option value="Tourism">Tourism</option>
-                            <option value="Business">Business</option>
-                            <option value="Medical">Medical</option>
-                            <option value="Education">Education</option>
-                            <option value="Transit">Transit</option>
+                            <option value="Tourism">{language === 'bn' ? 'سياحة' : 'Tourism'}</option>
+                            <option value="Business">{language === 'bn' ? 'أعمال' : 'Business'}</option>
+                            <option value="Medical">{language === 'bn' ? 'علاج' : 'Medical'}</option>
+                            <option value="Education">{language === 'bn' ? 'دراسة' : 'Education'}</option>
+                            <option value="Transit">{language === 'bn' ? 'عبور' : 'Transit'}</option>
                           </select>
                         </div>
                         <div>
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Accommodation Address
+                            {language === 'bn' ? 'عنوان السكن' : 'Accommodation Address'}
                           </label>
                           <input
                             type="text"
                             name="accommodation"
                             value={formData.accommodation}
                             onChange={handleInputChange}
-                            placeholder="Hotel name or address"
+                            placeholder={language === 'bn' ? 'اسم الفندق أو العنوان' : 'Hotel name or address'}
                             className={`w-full px-4 py-3 rounded-xl border-2 transition-colors ${
                               isDark 
                                 ? 'bg-slate-700 border-slate-600 text-white focus:border-primary-500' 
@@ -579,14 +578,14 @@ const VisaApplicationPage = () => {
                         </div>
                         <div className="md:col-span-2">
                           <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Additional Notes
+                            {language === 'bn' ? 'ملاحظات إضافية' : 'Additional Notes'}
                           </label>
                           <textarea
                             name="additionalNotes"
                             value={formData.additionalNotes}
                             onChange={handleInputChange}
                             rows={3}
-                            placeholder="Any additional information..."
+                            placeholder={language === 'bn' ? 'أي معلومات إضافية...' : 'Any additional information...'}
                             className={`w-full px-4 py-3 rounded-xl border-2 transition-colors resize-none ${
                               isDark 
                                 ? 'bg-slate-700 border-slate-600 text-white focus:border-primary-500' 
@@ -606,41 +605,43 @@ const VisaApplicationPage = () => {
                       className="space-y-6"
                     >
                       <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        Review Your Application
+                        {language === 'bn' ? 'راجع طلبك' : 'Review Your Application'}
                       </h2>
                       
                       <div className={`p-6 rounded-2xl ${isDark ? 'bg-slate-700' : 'bg-gray-50'}`}>
-                        <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Personal Details</h3>
+                        <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{language === 'bn' ? 'البيانات الشخصية' : 'Personal Details'}</h3>
                         <div className="grid md:grid-cols-2 gap-4 text-sm">
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Name:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.fullName}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Email:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.email}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Phone:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.phone}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>DOB:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.dateOfBirth}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الاسم:' : 'Name:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.fullName}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'البريد:' : 'Email:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.email}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الهاتف:' : 'Phone:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.phone}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الميلاد:' : 'DOB:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.dateOfBirth}</span></div>
                         </div>
                       </div>
                       
                       <div className={`p-6 rounded-2xl ${isDark ? 'bg-slate-700' : 'bg-gray-50'}`}>
-                        <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Passport Details</h3>
+                        <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{language === 'bn' ? 'بيانات الجواز' : 'Passport Details'}</h3>
                         <div className="grid md:grid-cols-2 gap-4 text-sm">
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Passport:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.passportNumber}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Expiry:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.passportExpiry}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Nationality:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.nationality}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الجواز:' : 'Passport:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.passportNumber}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الانتهاء:' : 'Expiry:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.passportExpiry}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الجنسية:' : 'Nationality:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.nationality}</span></div>
                         </div>
                       </div>
                       
                       <div className={`p-6 rounded-2xl ${isDark ? 'bg-slate-700' : 'bg-gray-50'}`}>
-                        <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Travel Details</h3>
+                        <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{language === 'bn' ? 'تفاصيل الرحلة' : 'Travel Details'}</h3>
                         <div className="grid md:grid-cols-2 gap-4 text-sm">
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Travel Date:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.travelDate}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Return Date:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.returnDate}</span></div>
-                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Purpose:</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.purpose}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'تاريخ السفر:' : 'Travel Date:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.travelDate}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'تاريخ العودة:' : 'Return Date:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.returnDate}</span></div>
+                          <div><span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الغرض:' : 'Purpose:'}</span> <span className={isDark ? 'text-white' : 'text-gray-900'}>{formData.purpose}</span></div>
                         </div>
                       </div>
 
                       <div className={`p-4 rounded-xl flex items-start gap-3 ${isDark ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-amber-50 border border-amber-200'}`}>
                         <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                         <p className={`text-sm ${isDark ? 'text-amber-200' : 'text-amber-800'}`}>
-                          Please review all details carefully before submitting. Our team will contact you for document submission after successful application.
+                          {language === 'bn'
+                            ? 'يرجى مراجعة جميع البيانات بعناية قبل الإرسال. سيتواصل معك فريقنا لاستكمال المستندات بعد استلام الطلب.'
+                            : 'Please review all details carefully before submitting. Our team will contact you for document submission after successful application.'}
                         </p>
                       </div>
                     </motion.div>
@@ -659,7 +660,7 @@ const VisaApplicationPage = () => {
                       }`}
                     >
                       <ArrowLeft className="w-4 h-4" />
-                      Previous
+                      {language === 'bn' ? 'السابق' : 'Previous'}
                     </button>
                     
                     {currentStep < 4 ? (
@@ -668,7 +669,7 @@ const VisaApplicationPage = () => {
                         onClick={() => setCurrentStep(prev => Math.min(4, prev + 1))}
                         className="px-6 py-3 bg-primary-500 text-white rounded-xl font-medium flex items-center gap-2 hover:bg-primary-600 transition-colors"
                       >
-                        Next
+                        {language === 'bn' ? 'التالي' : 'Next'}
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     ) : (
@@ -680,11 +681,11 @@ const VisaApplicationPage = () => {
                         {isSubmitting ? (
                           <>
                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Processing...
+                            {language === 'bn' ? 'جارٍ المعالجة...' : 'Processing...'}
                           </>
                         ) : (
                           <>
-                            Submit Application
+                            {language === 'bn' ? 'إرسال الطلب' : 'Submit Application'}
                             <Check className="w-5 h-5" />
                           </>
                         )}
@@ -709,21 +710,21 @@ const VisaApplicationPage = () => {
                 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between">
-                    <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Processing Time</span>
+                    <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'مدة المعالجة' : 'Processing Time'}</span>
                     <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{visa.processing}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Validity</span>
+                    <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'الصلاحية' : 'Validity'}</span>
                     <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{visa.validity}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Entry Type</span>
+                    <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>{language === 'bn' ? 'نوع الدخول' : 'Entry Type'}</span>
                     <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{visa.entry}</span>
                   </div>
                 </div>
                 
                 <div className={`p-4 rounded-2xl ${isDark ? 'bg-gradient-to-r from-primary-500/20 to-purple-500/20' : 'bg-gradient-to-r from-primary-50 to-purple-50'}`}>
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Total Fee</p>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{language === 'bn' ? 'إجمالي الرسوم' : 'Total Fee'}</p>
                   <p className="text-3xl font-bold text-primary-500">{formatCurrency(visa.price)}</p>
                 </div>
               </div>
@@ -731,7 +732,7 @@ const VisaApplicationPage = () => {
               {/* Requirements */}
               <div className={`p-6 rounded-3xl shadow-xl ${isDark ? 'bg-slate-800' : 'bg-white'}`}>
                 <h3 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Required Documents
+                  {language === 'bn' ? 'المستندات المطلوبة' : 'Required Documents'}
                 </h3>
                 <ul className="space-y-3">
                   {visa.requirements.map((req, index) => (
@@ -747,14 +748,14 @@ const VisaApplicationPage = () => {
               <div className={`p-6 rounded-3xl ${isDark ? 'bg-gradient-to-br from-primary-500/20 to-purple-500/20 border border-primary-500/20' : 'bg-gradient-to-br from-primary-50 to-purple-50 border border-primary-100'}`}>
                 <Shield className="w-10 h-10 text-primary-500 mb-4" />
                 <h3 className={`text-lg font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Need Help?
+                  {language === 'bn' ? 'هل تحتاج إلى مساعدة؟' : 'Need Help?'}
                 </h3>
                 <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Our visa experts are here to assist you 24/7
+                  {language === 'bn' ? 'خبراء التأشيرات لدينا جاهزون لمساعدتك على مدار الساعة' : 'Our visa experts are here to assist you 24/7'}
                 </p>
-                <a href="tel:+8801234567890" className="inline-flex items-center text-primary-500 font-medium hover:underline">
+                <a href="tel:+966551234567" className="inline-flex items-center text-primary-500 font-medium hover:underline">
                   <Phone className="w-4 h-4 mr-2" />
-                  +880 1234-567890
+                  +966 55 123 4567
                 </a>
               </div>
             </div>

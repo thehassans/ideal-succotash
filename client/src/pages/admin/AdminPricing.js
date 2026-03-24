@@ -3,12 +3,15 @@ import { motion } from 'framer-motion';
 import { Package, Edit2, Check, X } from 'lucide-react';
 import axios from 'axios';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useLanguage } from '../../context/LanguageContext';
+import { SAUDI_RIYAL_SYMBOL } from '../../utils/currency';
 
 const AdminPricing = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [editPrice, setEditPrice] = useState(0);
+  const { formatCurrency } = useLanguage();
 
   useEffect(() => {
     fetchPackages();
@@ -100,7 +103,7 @@ const AdminPricing = () => {
                       <p className="text-gray-400 text-sm mb-1">Current Price</p>
                       {editingId === pkg.id ? (
                         <div className="flex items-center space-x-2">
-                          <span className="text-gray-400">৳</span>
+                          <span className="text-gray-400">{SAUDI_RIYAL_SYMBOL}</span>
                           <input
                             type="number"
                             value={editPrice}
@@ -110,7 +113,7 @@ const AdminPricing = () => {
                         </div>
                       ) : (
                         <p className="text-2xl font-bold text-primary-400">
-                          ৳{pkg.price.toLocaleString()}
+                          {formatCurrency(pkg.price)}
                         </p>
                       )}
                     </div>

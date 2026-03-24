@@ -5,14 +5,13 @@ import {
   LayoutDashboard, 
   MessageSquare, 
   Calendar, 
-  Package, 
   Settings, 
   LogOut,
-  Menu,
   Plane,
   ChevronRight,
   Users,
   FileCheck,
+  FileText,
   Palmtree,
   Sun,
   Moon,
@@ -32,7 +31,8 @@ const AdminLayout = ({ children }) => {
     return saved ? saved === 'dark' : false; // Light mode as default
   });
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('adminLanguage') || 'en';
+    const saved = localStorage.getItem('adminLanguage');
+    return saved === 'ar' ? 'bn' : (saved || 'en');
   });
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const AdminLayout = ({ children }) => {
     if (!isMobile) {
       setSidebarOpen(true);
     }
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     localStorage.setItem('adminTheme', isDark ? 'dark' : 'light');
@@ -75,6 +75,7 @@ const AdminLayout = ({ children }) => {
       visas: 'Visa Pricing',
       visaQueries: 'Visa Applications',
       users: 'Users',
+      invoices: 'Invoices',
       pricing: 'Pricing',
       settings: 'Settings',
       aiAgent: 'AI Agent',
@@ -82,25 +83,26 @@ const AdminLayout = ({ children }) => {
       logout: 'Logout',
       viewSite: 'View Site',
       admin: 'Admin',
-      exploreHolidays: 'Explore Holidays'
+      exploreHolidays: 'Ahmed Essa Travel'
     },
     bn: {
-      dashboard: 'ড্যাশবোর্ড',
-      queries: 'জিজ্ঞাসা',
-      bookings: 'বুকিং',
-      flightBookings: 'ফ্লাইট বুকিং',
-      holidays: 'হলিডে',
-      visas: 'ভিসা মূল্য',
-      visaQueries: 'ভিসা আবেদন',
-      users: 'ব্যবহারকারী',
-      pricing: 'মূল্য',
-      settings: 'সেটিংস',
-      aiAgent: 'এআই এজেন্ট',
-      agentChats: 'এজেন্ট চ্যাট',
-      logout: 'লগআউট',
-      viewSite: 'সাইট দেখুন',
-      admin: 'অ্যাডমিন',
-      exploreHolidays: 'এক্সপ্লোর হলিডেজ'
+      dashboard: 'لوحة التحكم',
+      queries: 'الاستفسارات',
+      bookings: 'الحجوزات',
+      flightBookings: 'حجوزات الطيران',
+      holidays: 'العطلات',
+      visas: 'أسعار التأشيرات',
+      visaQueries: 'طلبات التأشيرات',
+      users: 'المستخدمون',
+      invoices: 'الفواتير',
+      pricing: 'الأسعار',
+      settings: 'الإعدادات',
+      aiAgent: 'الوكيل الذكي',
+      agentChats: 'محادثات الوكيل',
+      logout: 'تسجيل الخروج',
+      viewSite: 'عرض الموقع',
+      admin: 'الإدارة',
+      exploreHolidays: 'أحمد عيسى للسفر'
     }
   };
 
@@ -110,6 +112,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/dashboard', label: t.dashboard, icon: LayoutDashboard },
     { path: '/admin/queries', label: t.queries, icon: MessageSquare },
     { path: '/admin/bookings', label: t.bookings, icon: Calendar },
+    { path: '/admin/invoices', label: t.invoices, icon: FileText },
     { path: '/admin/flight-bookings', label: t.flightBookings, icon: Plane },
     { path: '/admin/holidays', label: t.holidays, icon: Palmtree },
     { path: '/admin/visas', label: t.visas, icon: FileCheck },
@@ -126,7 +129,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className={`min-h-screen flex ${isDark ? 'bg-slate-900' : 'bg-gray-100'}`}>
+    <div dir={language === 'bn' ? 'rtl' : 'ltr'} className={`min-h-screen flex ${isDark ? 'bg-slate-900' : 'bg-gray-100'}`}>
       {/* Mobile Overlay */}
       {sidebarOpen && isMobile && (
         <div 
@@ -291,7 +294,7 @@ const AdminLayout = ({ children }) => {
               title="Toggle Language"
             >
               <Globe className="w-4 h-4" />
-              {language === 'en' ? 'বাং' : 'EN'}
+              {language === 'en' ? 'عربي' : 'EN'}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05, rotate: 15 }}

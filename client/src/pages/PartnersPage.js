@@ -10,27 +10,27 @@ const PartnersPage = () => {
   const { language } = useLanguage();
 
   const bankPartners = [
-    { name: 'BRAC Bank', logo: 'https://via.placeholder.com/200x80/0ea5e9/ffffff?text=BRAC+Bank' },
-    { name: 'Dutch Bangla Bank', logo: 'https://via.placeholder.com/200x80/22c55e/ffffff?text=DBBL' },
-    { name: 'City Bank', logo: 'https://via.placeholder.com/200x80/8b5cf6/ffffff?text=City+Bank' },
-    { name: 'Eastern Bank', logo: 'https://via.placeholder.com/200x80/f97316/ffffff?text=EBL' },
-    { name: 'bKash', logo: 'https://via.placeholder.com/200x80/ec4899/ffffff?text=bKash' },
-    { name: 'Nagad', logo: 'https://via.placeholder.com/200x80/ef4444/ffffff?text=Nagad' },
+    { name: 'Al Rajhi Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Al_Rajhi_Bank_Logo.svg' },
+    { name: 'Saudi National Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/68/SNB_Logo.svg' },
+    { name: 'Riyad Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Riyad_Bank_logo.svg' },
+    { name: 'SAB', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/SABB_logo.svg' },
+    { name: 'Alinma Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/39/Alinma_Bank.svg' },
+    { name: 'Bank AlJazira', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Bank_AlJazira_Logo.svg' },
   ];
 
   const airlinePartners = [
-    { name: 'Biman Bangladesh', logo: 'https://via.placeholder.com/200x80/16a34a/ffffff?text=Biman' },
-    { name: 'Emirates', logo: 'https://via.placeholder.com/200x80/b91c1c/ffffff?text=Emirates' },
-    { name: 'Singapore Airlines', logo: 'https://via.placeholder.com/200x80/0369a1/ffffff?text=Singapore+Air' },
-    { name: 'Qatar Airways', logo: 'https://via.placeholder.com/200x80/7c2d12/ffffff?text=Qatar' },
-    { name: 'Thai Airways', logo: 'https://via.placeholder.com/200x80/7c3aed/ffffff?text=Thai' },
-    { name: 'Malaysia Airlines', logo: 'https://via.placeholder.com/200x80/0284c7/ffffff?text=Malaysia' },
+    { name: 'Saudia', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Saudia_Logo.svg' },
+    { name: 'Emirates', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Emirates_logo.svg' },
+    { name: 'Qatar Airways', logo: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Qatar_Airways_logo.svg' },
+    { name: 'Etihad Airways', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Etihad_Airways_Logo.svg' },
+    { name: 'Flynas', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Flynas_Logo.svg' },
+    { name: 'Flydubai', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Flydubai_logo.svg' },
   ];
 
   return (
     <>
       <Helmet>
-        <title>Our Partners | Explore Holidays</title>
+        <title>{language === 'bn' ? 'شركاؤنا' : 'Our Partners'} | Sabir Travels</title>
       </Helmet>
 
       <section className="relative pt-32 pb-16 bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500">
@@ -38,7 +38,7 @@ const PartnersPage = () => {
         <div className="relative max-w-7xl mx-auto px-4 text-center text-white">
           <Users className="w-16 h-16 mx-auto mb-6 opacity-80" />
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-5xl font-bold mb-4">
-            {language === 'bn' ? 'আমাদের অংশীদার' : 'Our Partners'}
+            {language === 'bn' ? 'شركاؤنا' : 'Our Partners'}
           </motion.h1>
         </div>
       </section>
@@ -46,7 +46,7 @@ const PartnersPage = () => {
       <section className={`py-20 ${isDark ? 'bg-slate-900' : 'bg-gray-50'}`}>
         <div className="max-w-7xl mx-auto px-4">
           <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-gray-900'}`} id="banks">
-            {language === 'bn' ? 'ব্যাংক অংশীদার' : 'Bank Partners'}
+            {language === 'bn' ? 'شركاء البنوك السعودية' : 'Saudi Banking Partners'}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-20">
             {bankPartners.map((partner, index) => (
@@ -58,7 +58,7 @@ const PartnersPage = () => {
           </div>
 
           <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-gray-900'}`} id="airlines">
-            {language === 'bn' ? 'এয়ারলাইন অংশীদার' : 'Airline Partners'}
+            {language === 'bn' ? 'شركاء الطيران الخليجي' : 'Gulf Airline Partners'}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {airlinePartners.map((partner, index) => (

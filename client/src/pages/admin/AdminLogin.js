@@ -42,7 +42,7 @@ const AdminLogin = () => {
               <Plane className="w-8 h-8 text-white transform -rotate-45" />
             </div>
             <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
-            <p className="text-gray-400 mt-1">Explore Holidays</p>
+            <p className="text-gray-400 mt-1">Sabir Travels</p>
           </div>
 
           {/* Error Message */}

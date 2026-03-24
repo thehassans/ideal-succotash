@@ -7,15 +7,12 @@ import {
   Star,
   Clock,
   Globe,
-  MessageCircle,
   Award,
   Camera,
-  Heart,
   Phone,
   Mail,
   Sparkles,
   Check,
-  Calendar,
   Languages
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
@@ -29,126 +26,126 @@ const TourGuidePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const categories = [
-    { id: 'all', name: 'All Guides', name_bn: 'সব গাইড' },
-    { id: 'city', name: 'City Tours', name_bn: 'সিটি ট্যুর' },
-    { id: 'adventure', name: 'Adventure', name_bn: 'অ্যাডভেঞ্চার' },
-    { id: 'cultural', name: 'Cultural', name_bn: 'সাংস্কৃতিক' },
-    { id: 'food', name: 'Food Tours', name_bn: 'ফুড ট্যুর' },
+    { id: 'all', name: 'All Guides', name_bn: 'جميع المرشدين' },
+    { id: 'city', name: 'City Tours', name_bn: 'جولات المدن' },
+    { id: 'adventure', name: 'Adventure', name_bn: 'مغامرات' },
+    { id: 'cultural', name: 'Cultural', name_bn: 'ثقافية' },
+    { id: 'food', name: 'Food Tours', name_bn: 'جولات الطعام' },
   ];
 
   const guides = [
     {
       id: 1,
-      name: 'Rafiq Ahmed',
-      name_bn: 'রফিক আহমেদ',
+      name: 'Faisal Al-Harbi',
+      name_bn: 'فيصل الحربي',
       photo: 'https://randomuser.me/api/portraits/men/32.jpg',
       category: 'city',
-      speciality: "Cox's Bazar & Chittagong",
-      speciality_bn: "কক্সবাজার ও চট্টগ্রাম",
-      languages: ['Bengali', 'English', 'Hindi'],
+      speciality: 'Riyadh Landmarks & Heritage',
+      speciality_bn: 'معالم الرياض والتراث',
+      languages: ['Arabic', 'English'],
       experience: 12,
       rating: 4.9,
       reviews: 248,
       tours: 520,
       price: 3000,
       priceUnit: 'day',
-      bio: 'Expert guide with deep knowledge of coastal Bangladesh. Specialized in beach tours and local culture.',
-      bio_bn: 'উপকূলীয় বাংলাদেশের গভীর জ্ঞান সম্পন্ন বিশেষজ্ঞ গাইড। সৈকত ভ্রমণ এবং স্থানীয় সংস্কৃতিতে বিশেষজ্ঞ।',
+      bio: 'Experienced city guide for Riyadh museums, historic districts, and premium local experiences.',
+      bio_bn: 'مرشد خبير في الرياض يقدم جولات مميزة في المتاحف والأحياء التاريخية والتجارب المحلية الراقية.',
       verified: true
     },
     {
       id: 2,
-      name: 'Fatema Begum',
-      name_bn: 'ফাতেমা বেগম',
+      name: 'Noura Al-Qahtani',
+      name_bn: 'نورة القحطاني',
       photo: 'https://randomuser.me/api/portraits/women/44.jpg',
       category: 'cultural',
-      speciality: 'Old Dhaka Heritage',
-      speciality_bn: 'পুরান ঢাকা ঐতিহ্য',
-      languages: ['Bengali', 'English', 'Arabic'],
+      speciality: 'Jeddah Historic District',
+      speciality_bn: 'جدة التاريخية',
+      languages: ['Arabic', 'English', 'French'],
       experience: 8,
       rating: 4.8,
       reviews: 186,
       tours: 340,
       price: 2500,
       priceUnit: 'day',
-      bio: 'Passionate about Dhaka\'s rich history and culture. Expert in heritage walks and traditional crafts.',
-      bio_bn: 'ঢাকার সমৃদ্ধ ইতিহাস ও সংস্কৃতির প্রতি আবেগী। ঐতিহ্যবাহী হাঁটা এবং ঐতিহ্যবাহী কারুশিল্পে বিশেষজ্ঞ।',
+      bio: 'Specialist in Jeddah Al-Balad heritage walks, architecture, and traditional Hijazi culture.',
+      bio_bn: 'متخصصة في جولات جدة البلد والتراث الحجازي والعمارة التاريخية والحرف التقليدية.',
       verified: true
     },
     {
       id: 3,
-      name: 'Kamal Hossain',
-      name_bn: 'কামাল হোসেন',
+      name: 'Majed Al-Anazi',
+      name_bn: 'ماجد العنزي',
       photo: 'https://randomuser.me/api/portraits/men/67.jpg',
       category: 'adventure',
-      speciality: 'Sundarbans & Wildlife',
-      speciality_bn: 'সুন্দরবন ও বন্যপ্রাণী',
-      languages: ['Bengali', 'English'],
+      speciality: 'AlUla Adventure Trails',
+      speciality_bn: 'مسارات المغامرة في العلا',
+      languages: ['Arabic', 'English'],
       experience: 15,
       rating: 4.9,
       reviews: 312,
       tours: 680,
       price: 4000,
       priceUnit: 'day',
-      bio: 'Wildlife expert and certified Sundarbans guide. Passionate about conservation and eco-tourism.',
-      bio_bn: 'বন্যপ্রাণী বিশেষজ্ঞ এবং প্রত্যয়িত সুন্দরবন গাইড। সংরক্ষণ এবং ইকো-ট্যুরিজমের প্রতি আবেগী।',
+      bio: 'Adventure expert for desert landscapes, rock formations, and guided outdoor experiences in AlUla.',
+      bio_bn: 'خبير مغامرات في العلا يقدم تجارب صحراوية ومسارات طبيعية وجولات خارجية منظمة باحترافية.',
       verified: true
     },
     {
       id: 4,
-      name: 'Shakil Rahman',
-      name_bn: 'শাকিল রহমান',
+      name: 'Sara Al-Shammari',
+      name_bn: 'سارة الشمري',
       photo: 'https://randomuser.me/api/portraits/men/45.jpg',
       category: 'food',
-      speciality: 'Bengali Cuisine Tours',
-      speciality_bn: 'বাঙালি রন্ধনশৈলী ট্যুর',
-      languages: ['Bengali', 'English'],
+      speciality: 'Saudi Cuisine Tours',
+      speciality_bn: 'جولات المطبخ السعودي',
+      languages: ['Arabic', 'English'],
       experience: 6,
       rating: 4.7,
       reviews: 145,
       tours: 220,
       price: 2000,
       priceUnit: 'day',
-      bio: 'Food enthusiast specializing in authentic Bengali street food and traditional cuisine experiences.',
-      bio_bn: 'খাদ্য উৎসাহী যিনি খাঁটি বাঙালি স্ট্রিট ফুড এবং ঐতিহ্যবাহী রন্ধনশৈলীতে বিশেষজ্ঞ।',
+      bio: 'Food host specializing in traditional Saudi dishes, coffee experiences, and curated culinary stops.',
+      bio_bn: 'مرشدة متخصصة في الأطباق السعودية والقهوة العربية والتجارب الذوقية المختارة بعناية.',
       verified: true
     },
     {
       id: 5,
-      name: 'Nadia Islam',
-      name_bn: 'নাদিয়া ইসলাম',
+      name: 'Layan Al-Otaibi',
+      name_bn: 'ليان العتيبي',
       photo: 'https://randomuser.me/api/portraits/women/68.jpg',
       category: 'city',
-      speciality: 'Sylhet Tea Gardens',
-      speciality_bn: 'সিলেট চা বাগান',
-      languages: ['Bengali', 'English', 'Hindi'],
+      speciality: 'Abha & Mountain Views',
+      speciality_bn: 'أبها والإطلالات الجبلية',
+      languages: ['Arabic', 'English'],
       experience: 10,
       rating: 4.8,
       reviews: 198,
       tours: 410,
       price: 3500,
       priceUnit: 'day',
-      bio: 'Sylhet native with extensive knowledge of tea gardens, waterfalls, and natural beauty of the region.',
-      bio_bn: 'চা বাগান, জলপ্রপাত এবং অঞ্চলের প্রাকৃতিক সৌন্দর্যের ব্যাপক জ্ঞান সম্পন্ন সিলেটের স্থানীয়।',
+      bio: 'Mountain-region guide focused on Abha scenery, local markets, and family-friendly day tours.',
+      bio_bn: 'مرشدة متخصصة في أبها تقدم جولات يومية عائلية تشمل الطبيعة والأسواق المحلية والإطلالات الجبلية.',
       verified: true
     },
     {
       id: 6,
-      name: 'Imran Khan',
-      name_bn: 'ইমরান খান',
+      name: 'Omar Al-Zahrani',
+      name_bn: 'عمر الزهراني',
       photo: 'https://randomuser.me/api/portraits/men/52.jpg',
       category: 'adventure',
-      speciality: 'Hill Tracts Trekking',
-      speciality_bn: 'পার্বত্য চট্টগ্রাম ট্রেকিং',
-      languages: ['Bengali', 'English', 'Chakma'],
+      speciality: 'Taif Hiking & Nature',
+      speciality_bn: 'هايكنج الطبيعة في الطائف',
+      languages: ['Arabic', 'English'],
       experience: 9,
       rating: 4.9,
       reviews: 167,
       tours: 290,
       price: 4500,
       priceUnit: 'day',
-      bio: 'Adventure specialist for Bandarban, Rangamati, and Khagrachhari. Expert in hill trekking and tribal culture.',
-      bio_bn: 'বান্দরবান, রাঙ্গামাটি এবং খাগড়াছড়ির জন্য অ্যাডভেঞ্চার বিশেষজ্ঞ। পাহাড়ি ট্রেকিং এবং উপজাতীয় সংস্কৃতিতে বিশেষজ্ঞ।',
+      bio: 'Outdoor guide for Taif landscapes, hiking routes, and active travelers seeking scenic exploration.',
+      bio_bn: 'مرشد أنشطة خارجية في الطائف يقدم مسارات مشي وجولات طبيعية للمسافرين الباحثين عن الاستكشاف والمناظر الجميلة.',
       verified: true
     }
   ];
@@ -157,30 +154,30 @@ const TourGuidePage = () => {
     {
       icon: Award,
       title: 'Certified Guides',
-      title_bn: 'প্রত্যয়িত গাইড',
+      title_bn: 'مرشدون معتمدون',
       description: 'All guides are licensed and verified',
-      description_bn: 'সব গাইড লাইসেন্সপ্রাপ্ত এবং যাচাইকৃত'
+      description_bn: 'جميع المرشدين موثقون ومعتمدون رسميًا'
     },
     {
       icon: Globe,
       title: 'Local Expertise',
-      title_bn: 'স্থানীয় দক্ষতা',
+      title_bn: 'خبرة محلية',
       description: 'Deep knowledge of local culture and history',
-      description_bn: 'স্থানীয় সংস্কৃতি ও ইতিহাসের গভীর জ্ঞান'
+      description_bn: 'معرفة عميقة بالثقافة المحلية والتاريخ والمعالم'
     },
     {
       icon: Languages,
       title: 'Multilingual',
-      title_bn: 'বহুভাষী',
+      title_bn: 'متعددو اللغات',
       description: 'Guides fluent in multiple languages',
-      description_bn: 'একাধিক ভাষায় দক্ষ গাইড'
+      description_bn: 'مرشدون يجيدون أكثر من لغة لخدمة المسافرين بسهولة'
     },
     {
       icon: Camera,
       title: 'Photo Support',
-      title_bn: 'ফটো সাপোর্ট',
+      title_bn: 'مساعدة تصوير',
       description: 'Help capture your best travel moments',
-      description_bn: 'আপনার সেরা ভ্রমণ মুহূর্ত ক্যাপচার করতে সাহায্য'
+      description_bn: 'مساعدة في توثيق أجمل لحظات رحلتك'
     }
   ];
 
@@ -191,7 +188,7 @@ const TourGuidePage = () => {
   return (
     <>
       <Helmet>
-        <title>{language === 'bn' ? 'ট্যুর গাইড' : 'Tour Guides'} | Explore Holidays</title>
+        <title>{language === 'bn' ? 'المرشدون السياحيون' : 'Tour Guides'} | Sabir Travels</title>
       </Helmet>
 
       <div className={`min-h-screen ${isDark ? 'bg-slate-950' : 'bg-gray-50'}`}>
@@ -226,25 +223,25 @@ const TourGuidePage = () => {
                 <Users className="w-10 h-10 text-white" />
               </motion.div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6">
-                {language === 'bn' ? 'বিশেষজ্ঞ ট্যুর গাইড' : 'Expert Tour Guides'}
+                {language === 'bn' ? 'مرشدون سياحيون خبراء' : 'Expert Tour Guides'}
               </h1>
               <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
                 {language === 'bn' 
-                  ? 'স্থানীয় বিশেষজ্ঞদের সাথে বাংলাদেশ আবিষ্কার করুন যারা প্রতিটি ভ্রমণকে অবিস্মরণীয় করে তোলে'
-                  : 'Discover Bangladesh with local experts who make every journey unforgettable'}
+                  ? 'اكتشف مدن ومعالم المملكة مع مرشدين محليين يجعلون كل رحلة أكثر عمقًا وراحة'
+                  : 'Discover Saudi Arabia with local experts who make every journey unforgettable'}
               </p>
               <div className="flex flex-wrap justify-center gap-6 text-white/90">
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-yellow-400" />
-                  <span>{language === 'bn' ? '৫০+ যাচাইকৃত গাইড' : '50+ Verified Guides'}</span>
+                  <span>{language === 'bn' ? '50+ مرشدًا موثقًا' : '50+ Verified Guides'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400" />
-                  <span>{language === 'bn' ? '৪.৮+ গড় রেটিং' : '4.8+ Avg Rating'}</span>
+                  <span>{language === 'bn' ? 'متوسط تقييم 4.8+' : '4.8+ Avg Rating'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Globe className="w-5 h-5 text-yellow-400" />
-                  <span>{language === 'bn' ? 'সারা বাংলাদেশে' : 'All Over Bangladesh'}</span>
+                  <span>{language === 'bn' ? 'في مختلف مدن المملكة' : 'Across Saudi Arabia'}</span>
                 </div>
               </div>
             </motion.div>
@@ -327,10 +324,10 @@ const TourGuidePage = () => {
                   : 'bg-slate-900 text-white'
               }`}>
                 <Sparkles className="w-4 h-4 mr-2" />
-                {language === 'bn' ? 'আমাদের গাইড' : 'Our Guides'}
+                {language === 'bn' ? 'مرشدونا' : 'Our Guides'}
               </span>
               <h2 className={`text-3xl sm:text-4xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'bn' ? 'আপনার গাইড বেছে নিন' : 'Choose Your Guide'}
+                {language === 'bn' ? 'اختر مرشدك المناسب' : 'Choose Your Guide'}
               </h2>
             </motion.div>
 
@@ -386,7 +383,7 @@ const TourGuidePage = () => {
                             </span>
                           </div>
                           <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                            ({guide.reviews} reviews)
+                            ({guide.reviews} {language === 'bn' ? 'مراجعة' : 'reviews'})
                           </span>
                         </div>
                       </div>
@@ -403,11 +400,11 @@ const TourGuidePage = () => {
                     <div className="flex items-center gap-4 mb-4">
                       <div className={`flex items-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         <Clock className="w-4 h-4 mr-1" />
-                        {guide.experience} {language === 'bn' ? 'বছর' : 'years'}
+                        {guide.experience} {language === 'bn' ? 'سنوات' : 'years'}
                       </div>
                       <div className={`flex items-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         <MapPin className="w-4 h-4 mr-1" />
-                        {guide.tours} {language === 'bn' ? 'ট্যুর' : 'tours'}
+                        {guide.tours} {language === 'bn' ? 'جولات' : 'tours'}
                       </div>
                     </div>
 
@@ -429,7 +426,7 @@ const TourGuidePage = () => {
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-slate-700">
                       <div>
                         <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {language === 'bn' ? 'প্রতি দিন' : 'per day'}
+                          {language === 'bn' ? 'لكل يوم' : 'per day'}
                         </span>
                         <p className={`text-2xl font-black ${
                           useGradients 
@@ -448,7 +445,7 @@ const TourGuidePage = () => {
                             : 'bg-slate-900 hover:bg-slate-800'
                         }`}
                       >
-                        {language === 'bn' ? 'বুক করুন' : 'Book Now'}
+                        {language === 'bn' ? 'احجز الآن' : 'Book Now'}
                       </motion.button>
                     </div>
                   </div>
@@ -468,15 +465,15 @@ const TourGuidePage = () => {
               className="text-center mb-12"
             >
               <h2 className={`text-3xl sm:text-4xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'bn' ? 'কীভাবে কাজ করে' : 'How It Works'}
+                {language === 'bn' ? 'كيف تعمل الخدمة' : 'How It Works'}
               </h2>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { step: 1, title: 'Choose Guide', title_bn: 'গাইড বাছাই', desc: 'Browse profiles and pick your perfect guide', desc_bn: 'প্রোফাইল দেখুন এবং আপনার পছন্দের গাইড বাছাই করুন' },
-                { step: 2, title: 'Book & Pay', title_bn: 'বুক ও পেমেন্ট', desc: 'Select dates and complete secure payment', desc_bn: 'তারিখ নির্বাচন করুন এবং নিরাপদ পেমেন্ট সম্পন্ন করুন' },
-                { step: 3, title: 'Enjoy Tour', title_bn: 'ট্যুর উপভোগ', desc: 'Meet your guide and explore!', desc_bn: 'আপনার গাইডের সাথে দেখা করুন এবং অন্বেষণ করুন!' },
+                { step: 1, title: 'Choose Guide', title_bn: 'اختر المرشد', desc: 'Browse profiles and pick your perfect guide', desc_bn: 'استعرض الملفات الشخصية واختر المرشد الأنسب لرحلتك' },
+                { step: 2, title: 'Book & Pay', title_bn: 'احجز وادفع', desc: 'Select dates and complete secure payment', desc_bn: 'حدد التاريخ وأكمل عملية الدفع الآمنة' },
+                { step: 3, title: 'Enjoy Tour', title_bn: 'استمتع بالجولة', desc: 'Meet your guide and explore!', desc_bn: 'التقِ بمرشدك وابدأ التجربة بثقة ومتعة' },
               ].map((item, index) => (
                 <motion.div
                   key={item.step}
@@ -513,29 +510,29 @@ const TourGuidePage = () => {
         }`}>
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-6">
-              {language === 'bn' ? 'গাইড হতে চান?' : 'Want to Become a Guide?'}
+              {language === 'bn' ? 'هل ترغب في أن تصبح مرشدًا؟' : 'Want to Become a Guide?'}
             </h2>
             <p className="text-white/80 mb-8 text-lg">
               {language === 'bn' 
-                ? 'আমাদের টিমে যোগ দিন এবং পর্যটকদের বাংলাদেশ দেখান'
-                : 'Join our team and show tourists the beauty of Bangladesh'}
+                ? 'انضم إلى فريق Sabir Travels وساعد الزوار على اكتشاف أجمل وجهات المملكة'
+                : 'Join our team and show travelers the beauty of Saudi Arabia'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
-                href="tel:+8801234567890"
+                href="tel:+966551234567"
                 whileHover={{ scale: 1.05 }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-purple-600 font-bold rounded-xl hover:shadow-xl transition-all"
               >
                 <Phone className="w-5 h-5" />
-                +880 1234-567890
+                +966 55 123 4567
               </motion.a>
               <motion.a
-                href="mailto:guides@exploreholidays.com"
+                href="mailto:guides@sabirtravels.sa"
                 whileHover={{ scale: 1.05 }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
               >
                 <Mail className="w-5 h-5" />
-                guides@exploreholidays.com
+                guides@sabirtravels.sa
               </motion.a>
             </div>
           </div>

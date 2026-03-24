@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  ClipboardList, Search, Eye, Check, X, Clock, 
-  User, Mail, Phone, Calendar, Globe, FileCheck,
-  Download, Filter, RefreshCw
+  ClipboardList, Search, Eye, Check, X,
+  User, Globe, FileCheck, RefreshCw
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AdminVisaQueries = () => {
   const [applications, setApplications] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedApp, setSelectedApp] = useState(null);
+  const { formatCurrency } = useLanguage();
 
   useEffect(() => {
     // Load from localStorage
@@ -157,7 +158,7 @@ const AdminVisaQueries = () => {
                         <span className="text-slate-800 dark:text-white">{app.travelDate}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-medium text-primary-500">৳{app.price?.toLocaleString()}</span>
+                        <span className="font-medium text-primary-500">{formatCurrency(app.price || 0)}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(app.status)}`}>
@@ -314,7 +315,7 @@ const AdminVisaQueries = () => {
                 {/* Fee */}
                 <div className="flex items-center justify-between p-4 bg-primary-500/10 rounded-xl">
                   <span className="text-slate-800 dark:text-white font-medium">Processing Fee</span>
-                  <span className="text-2xl font-bold text-primary-500">৳{selectedApp.price?.toLocaleString()}</span>
+                  <span className="text-2xl font-bold text-primary-500">{formatCurrency(selectedApp.price || 0)}</span>
                 </div>
 
                 {/* Applied Date */}

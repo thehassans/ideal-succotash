@@ -22,6 +22,22 @@ const Footer = () => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const { useGradients } = useGradient();
+  const siteSettings = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('siteSettings') || '{}');
+    } catch (error) {
+      return {};
+    }
+  })();
+  const siteName = !siteSettings.siteName || ['Ahmed Essa Travel', 'Explore Holidays'].includes(siteSettings.siteName)
+    ? 'Sabir Travels'
+    : siteSettings.siteName;
+  const tagline = !siteSettings.tagline || siteSettings.tagline === 'Your Premium Travel Partner'
+    ? 'Your trusted travel partner in Saudi Arabia'
+    : siteSettings.tagline;
+  const email = !siteSettings.email || ['info@ahmedessatravel.sa', 'info@exploreholidays.com'].includes(siteSettings.email)
+    ? 'info@sabirtravels.sa'
+    : siteSettings.email;
 
   const footerLinks = {
     company: [
@@ -75,7 +91,7 @@ const Footer = () => {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-2xl font-bold mb-2">{t('footer.newsletter')}</h3>
-              <p className="text-white/80">Get exclusive deals and travel tips delivered to your inbox</p>
+              <p className="text-white/80">{t('footer.newsletterPlaceholder')}</p>
             </div>
             <div className="flex w-full lg:w-auto">
               <input
@@ -108,28 +124,27 @@ const Footer = () => {
                 <Plane className={`w-6 h-6 transform -rotate-45 ${useGradients ? 'text-white' : 'text-slate-900'}`} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">Explore Holidays</h2>
-                <p className="text-sm text-gray-400">Your Premium Travel Partner</p>
+                <h2 className="text-xl font-bold text-white">{siteName}</h2>
+                <p className="text-sm text-gray-400">{tagline}</p>
               </div>
             </Link>
             <p className="text-gray-400 mb-6 max-w-sm leading-relaxed">
-              Experience the world with Bangladesh's most trusted travel agency. 
-              We make your dream vacations a reality with premium services and unbeatable prices.
+              {siteSettings.footerText || 'Premium travel services tailored for Saudi Arabia and Gulf travelers.'}
             </p>
             
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-400">
                 <MapPin className="w-5 h-5 text-primary-500" />
-                <span>House 42, Road 11, Banani, Dhaka 1213</span>
+                <span>{siteSettings.address || 'Olaya Street, Riyadh 12214, Saudi Arabia'}</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Phone className="w-5 h-5 text-primary-500" />
-                <span>+880 1234-567890</span>
+                <span>{siteSettings.phone || '+966 55 123 4567'}</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Mail className="w-5 h-5 text-primary-500" />
-                <span>info@exploreholidays.com</span>
+                <span>{email}</span>
               </div>
             </div>
 
@@ -211,14 +226,14 @@ const Footer = () => {
         {/* Payment Partners */}
         <div className="border-t border-gray-800 pt-8 mb-8">
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <span className="text-gray-500 text-sm mr-2">Payment Partners:</span>
+            <span className="text-gray-500 text-sm mr-2">{t('section.bankPartners')}:</span>
             {[
-              { name: 'BRAC Bank', logo: 'https://logo.clearbit.com/bracbank.com' },
-              { name: 'Dutch Bangla', logo: 'https://logo.clearbit.com/dutchbanglabank.com' },
-              { name: 'City Bank', logo: 'https://logo.clearbit.com/thecitybank.com' },
-              { name: 'EBL', logo: 'https://logo.clearbit.com/ebl.com.bd' },
-              { name: 'bKash', logo: 'https://logo.clearbit.com/bkash.com' },
-              { name: 'Nagad', logo: 'https://logo.clearbit.com/nagad.com.bd' }
+              { name: 'Al Rajhi Bank', logo: 'https://logo.clearbit.com/alrajhibank.com.sa' },
+              { name: 'Saudi National Bank', logo: 'https://logo.clearbit.com/alahli.com' },
+              { name: 'Riyad Bank', logo: 'https://logo.clearbit.com/riyadbank.com' },
+              { name: 'SAB', logo: 'https://logo.clearbit.com/sab.com' },
+              { name: 'stc pay', logo: 'https://logo.clearbit.com/stcpay.com.sa' },
+              { name: 'mada', logo: 'https://logo.clearbit.com/mada.com.sa' }
             ].map((partner, index) => (
               <motion.div
                 key={index}
@@ -243,7 +258,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} Explore Holidays. {t('footer.rights')}.
+              {siteSettings.copyrightText || `(C) ${new Date().getFullYear()} Sabir Travels. ${t('footer.rights')}.`}
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
               <p className="text-gray-500 text-sm flex items-center">

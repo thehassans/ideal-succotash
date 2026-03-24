@@ -9,7 +9,6 @@ import {
   Users, 
   Search, 
   Plane,
-  ArrowRightLeft,
   ChevronDown,
   Minus,
   Plus,
@@ -51,39 +50,39 @@ const HeroBanner = () => {
       setCurrentBg((prev) => (prev + 1) % backgrounds.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [backgrounds.length]);
 
   const popularOrigins = [
-    { code: 'DAC', name: 'Dhaka', name_bn: 'ঢাকা', country: 'Bangladesh' },
-    { code: 'CGP', name: 'Chittagong', name_bn: 'চট্টগ্রাম', country: 'Bangladesh' },
-    { code: 'ZYL', name: 'Sylhet', name_bn: 'সিলেট', country: 'Bangladesh' },
-    { code: 'JSR', name: 'Jessore', name_bn: 'যশোর', country: 'Bangladesh' },
-    { code: 'CXB', name: "Cox's Bazar", name_bn: 'কক্সবাজার', country: 'Bangladesh' },
-    { code: 'RJH', name: 'Rajshahi', name_bn: 'রাজশাহী', country: 'Bangladesh' },
+    { code: 'RUH', name: 'Riyadh', name_bn: 'الرياض', country: 'Saudi Arabia' },
+    { code: 'JED', name: 'Jeddah', name_bn: 'جدة', country: 'Saudi Arabia' },
+    { code: 'DMM', name: 'Dammam', name_bn: 'الدمام', country: 'Saudi Arabia' },
+    { code: 'MED', name: 'Madinah', name_bn: 'المدينة المنورة', country: 'Saudi Arabia' },
+    { code: 'AHB', name: 'Abha', name_bn: 'أبها', country: 'Saudi Arabia' },
+    { code: 'TUU', name: 'Tabuk', name_bn: 'تبوك', country: 'Saudi Arabia' },
   ];
 
   const popularDestinations = [
-    { code: 'DXB', name: 'Dubai', name_bn: 'দুবাই', country: 'UAE' },
-    { code: 'SIN', name: 'Singapore', name_bn: 'সিঙ্গাপুর', country: 'Singapore' },
-    { code: 'BKK', name: 'Bangkok', name_bn: 'ব্যাংকক', country: 'Thailand' },
-    { code: 'KUL', name: 'Kuala Lumpur', name_bn: 'কুয়ালালামপুর', country: 'Malaysia' },
-    { code: 'MLE', name: 'Maldives', name_bn: 'মালদ্বীপ', country: 'Maldives' },
-    { code: 'DOH', name: 'Doha', name_bn: 'দোহা', country: 'Qatar' },
-    { code: 'JED', name: 'Jeddah', name_bn: 'জেদ্দা', country: 'Saudi Arabia' },
-    { code: 'RUH', name: 'Riyadh', name_bn: 'রিয়াদ', country: 'Saudi Arabia' },
-    { code: 'CCU', name: 'Kolkata', name_bn: 'কলকাতা', country: 'India' },
-    { code: 'DEL', name: 'Delhi', name_bn: 'দিল্লি', country: 'India' },
-    { code: 'BOM', name: 'Mumbai', name_bn: 'মুম্বাই', country: 'India' },
-    { code: 'LHR', name: 'London', name_bn: 'লন্ডন', country: 'UK' },
-    { code: 'IST', name: 'Istanbul', name_bn: 'ইস্তাম্বুল', country: 'Turkey' },
-    { code: 'CMB', name: 'Colombo', name_bn: 'কলম্বো', country: 'Sri Lanka' },
-    { code: 'HKG', name: 'Hong Kong', name_bn: 'হংকং', country: 'Hong Kong' },
+    { code: 'DXB', name: 'Dubai', name_bn: 'دبي', country: 'UAE' },
+    { code: 'IST', name: 'Istanbul', name_bn: 'إسطنبول', country: 'Turkey' },
+    { code: 'LHR', name: 'London', name_bn: 'لندن', country: 'UK' },
+    { code: 'CAI', name: 'Cairo', name_bn: 'القاهرة', country: 'Egypt' },
+    { code: 'MLE', name: 'Maldives', name_bn: 'المالديف', country: 'Maldives' },
+    { code: 'KUL', name: 'Kuala Lumpur', name_bn: 'كوالالمبور', country: 'Malaysia' },
+    { code: 'DOH', name: 'Doha', name_bn: 'الدوحة', country: 'Qatar' },
+    { code: 'AMM', name: 'Amman', name_bn: 'عمّان', country: 'Jordan' },
+    { code: 'PAR', name: 'Paris', name_bn: 'باريس', country: 'France' },
+    { code: 'ROM', name: 'Rome', name_bn: 'روما', country: 'Italy' },
+    { code: 'BKK', name: 'Bangkok', name_bn: 'بانكوك', country: 'Thailand' },
+    { code: 'SIN', name: 'Singapore', name_bn: 'سنغافورة', country: 'Singapore' },
+    { code: 'JFK', name: 'New York', name_bn: 'نيويورك', country: 'USA' },
+    { code: 'NRT', name: 'Tokyo', name_bn: 'طوكيو', country: 'Japan' },
+    { code: 'GVA', name: 'Geneva', name_bn: 'جنيف', country: 'Switzerland' },
   ];
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (!origin || !destination) {
-      alert(language === 'bn' ? 'অনুগ্রহ করে উৎপত্তি এবং গন্তব্য নির্বাচন করুন' : 'Please select origin and destination');
+      alert(language === 'bn' ? 'يرجى اختيار نقطة الانطلاق والوجهة' : 'Please select origin and destination');
       return;
     }
     const searchParams = new URLSearchParams({
@@ -95,12 +94,6 @@ const HeroBanner = () => {
       children: passengers.children
     });
     navigate(`/flights/search?${searchParams.toString()}`);
-  };
-
-  const swapLocations = () => {
-    const temp = origin;
-    setOrigin(destination);
-    setDestination(temp);
   };
 
   const updatePassengers = (type, action) => {
@@ -188,7 +181,7 @@ const HeroBanner = () => {
           <span className={`inline-flex items-center px-6 py-2 rounded-full backdrop-blur-sm border ${useGradients ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-500/30' : 'bg-white/10 border-white/20'}`}>
             <Star className={`w-4 h-4 mr-2 fill-current ${useGradients ? 'text-amber-400' : 'text-white'}`} />
             <span className={`text-sm font-medium ${useGradients ? 'text-amber-300' : 'text-white'}`}>
-              {language === 'bn' ? 'বাংলাদেশের #১ ট্রাভেল এজেন্সি' : "Bangladesh's #1 Travel Agency"}
+              {language === 'bn' ? 'وكالتك العربية الموثوقة للسفر حول العالم' : 'Your Trusted Travel Agency for Global Journeys'}
             </span>
             <Star className={`w-4 h-4 ml-2 fill-current ${useGradients ? 'text-amber-400' : 'text-white'}`} />
           </span>
@@ -207,10 +200,10 @@ const HeroBanner = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            {language === 'bn' ? 'আপনার স্বপ্নের যাত্রা' : 'Your Dream Journey'}
+            {language === 'bn' ? 'رحلتك المثالية' : 'Your Dream Journey'}
             <br />
             <span className={useGradients ? 'bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent' : 'text-white/90'}>
-              {language === 'bn' ? 'এখানে শুরু হয়' : 'Starts Here'}
+              {language === 'bn' ? 'تبدأ من هنا' : 'Starts Here'}
             </span>
           </motion.h1>
           <motion.p 
@@ -220,7 +213,7 @@ const HeroBanner = () => {
             transition={{ delay: 0.4 }}
           >
             {language === 'bn' 
-              ? 'বিশ্বের সেরা গন্তব্যগুলো অন্বেষণ করুন প্রিমিয়াম সার্ভিস এবং সেরা মূল্যে'
+              ? 'اكتشف أفضل الوجهات العالمية بخدمة راقية وأسعار تنافسية من Sabir Travels'
               : 'Explore world-class destinations with premium service & unbeatable prices'}
           </motion.p>
         </motion.div>
@@ -301,7 +294,7 @@ const HeroBanner = () => {
                 <label className={`block text-sm font-medium mb-2 flex items-center ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   <Calendar className={`w-4 h-4 mr-1.5 ${useGradients ? 'text-primary-500' : 'text-slate-600'}`} />
                   <span className="hidden sm:inline">{t('banner.departDate')}</span>
-                  <span className="sm:hidden">{language === 'bn' ? 'যাত্রা' : 'Depart'}</span>
+                  <span className="sm:hidden">{language === 'bn' ? 'مغادرة' : 'Depart'}</span>
                 </label>
                 <DatePicker
                   selected={departDate}
@@ -329,7 +322,7 @@ const HeroBanner = () => {
                 <label className={`block text-sm font-medium mb-2 flex items-center ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   <Calendar className={`w-4 h-4 mr-1.5 ${useGradients ? 'text-secondary-500' : 'text-slate-600'}`} />
                   <span className="hidden sm:inline">{t('banner.returnDate')}</span>
-                  <span className="sm:hidden">{language === 'bn' ? 'ফেরত' : 'Return'}</span>
+                  <span className="sm:hidden">{language === 'bn' ? 'عودة' : 'Return'}</span>
                 </label>
                 <DatePicker
                   selected={returnDate}
@@ -488,10 +481,10 @@ const HeroBanner = () => {
           className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6"
         >
           {[
-            { number: '50K+', label: 'Happy Travelers', label_bn: 'সুখী ভ্রমণকারী', icon: Users, gradient: 'from-cyan-500 to-blue-500' },
-            { number: '100+', label: 'Destinations', label_bn: 'গন্তব্য', icon: Globe, gradient: 'from-purple-500 to-pink-500' },
-            { number: '24/7', label: 'Support', label_bn: 'সহায়তা', icon: Clock, gradient: 'from-green-500 to-emerald-500' },
-            { number: '99%', label: 'Satisfaction', label_bn: 'সন্তুষ্টি', icon: Shield, gradient: 'from-amber-500 to-orange-500' },
+            { number: '50K+', label: 'Happy Travelers', label_bn: 'مسافرون سعداء', icon: Users, gradient: 'from-cyan-500 to-blue-500' },
+            { number: '100+', label: 'Destinations', label_bn: 'وجهة', icon: Globe, gradient: 'from-purple-500 to-pink-500' },
+            { number: '24/7', label: 'Support', label_bn: 'دعم متواصل', icon: Clock, gradient: 'from-green-500 to-emerald-500' },
+            { number: '99%', label: 'Satisfaction', label_bn: 'رضا العملاء', icon: Shield, gradient: 'from-amber-500 to-orange-500' },
           ].map((stat, index) => {
             const Icon = stat.icon;
             return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { 
@@ -11,12 +11,6 @@ import {
   AlertTriangle,
   Phone,
   FileText,
-  Clock,
-  Globe,
-  Users,
-  Star,
-  ArrowRight,
-  ChevronDown,
   Sparkles,
   Mail,
   CheckCircle
@@ -29,22 +23,21 @@ const TravelInsurancePage = () => {
   const { isDark } = useTheme();
   const { language, formatCurrency } = useLanguage();
   const { useGradients } = useGradient();
-  const [selectedPlan, setSelectedPlan] = useState('standard');
 
   const insurancePlans = [
     {
       id: 'basic',
       name: 'Basic',
-      name_bn: 'বেসিক',
+      name_bn: 'الخطة الأساسية',
       price: 500,
       duration: 'per trip',
       color: 'from-green-500 to-emerald-500',
       popular: false,
       coverage: [
-        { item: 'Medical Expenses', amount: '৳500,000', included: true },
-        { item: 'Trip Cancellation', amount: '৳100,000', included: true },
-        { item: 'Lost Baggage', amount: '৳50,000', included: true },
-        { item: 'Flight Delay', amount: '৳10,000', included: true },
+        { item: 'Medical Expenses', amount: '25,000 ر.س', included: true },
+        { item: 'Trip Cancellation', amount: '5,000 ر.س', included: true },
+        { item: 'Lost Baggage', amount: '2,500 ر.س', included: true },
+        { item: 'Flight Delay', amount: '500 ر.س', included: true },
         { item: 'Emergency Evacuation', amount: '-', included: false },
         { item: 'Adventure Sports', amount: '-', included: false },
         { item: '24/7 Assistance', amount: '-', included: false },
@@ -53,17 +46,17 @@ const TravelInsurancePage = () => {
     {
       id: 'standard',
       name: 'Standard',
-      name_bn: 'স্ট্যান্ডার্ড',
+      name_bn: 'الخطة القياسية',
       price: 1200,
       duration: 'per trip',
       color: 'from-blue-500 to-indigo-500',
       popular: true,
       coverage: [
-        { item: 'Medical Expenses', amount: '৳1,500,000', included: true },
-        { item: 'Trip Cancellation', amount: '৳300,000', included: true },
-        { item: 'Lost Baggage', amount: '৳100,000', included: true },
-        { item: 'Flight Delay', amount: '৳25,000', included: true },
-        { item: 'Emergency Evacuation', amount: '৳500,000', included: true },
+        { item: 'Medical Expenses', amount: '75,000 ر.س', included: true },
+        { item: 'Trip Cancellation', amount: '15,000 ر.س', included: true },
+        { item: 'Lost Baggage', amount: '5,000 ر.س', included: true },
+        { item: 'Flight Delay', amount: '1,500 ر.س', included: true },
+        { item: 'Emergency Evacuation', amount: '25,000 ر.س', included: true },
         { item: 'Adventure Sports', amount: '-', included: false },
         { item: '24/7 Assistance', amount: 'Included', included: true },
       ]
@@ -71,16 +64,16 @@ const TravelInsurancePage = () => {
     {
       id: 'premium',
       name: 'Premium',
-      name_bn: 'প্রিমিয়াম',
+      name_bn: 'الخطة الممتازة',
       price: 2500,
       duration: 'per trip',
       color: 'from-purple-500 to-pink-500',
       popular: false,
       coverage: [
-        { item: 'Medical Expenses', amount: '৳5,000,000', included: true },
-        { item: 'Trip Cancellation', amount: '৳500,000', included: true },
-        { item: 'Lost Baggage', amount: '৳200,000', included: true },
-        { item: 'Flight Delay', amount: '৳50,000', included: true },
+        { item: 'Medical Expenses', amount: '250,000 ر.س', included: true },
+        { item: 'Trip Cancellation', amount: '25,000 ر.س', included: true },
+        { item: 'Lost Baggage', amount: '10,000 ر.س', included: true },
+        { item: 'Flight Delay', amount: '3,000 ر.س', included: true },
         { item: 'Emergency Evacuation', amount: 'Unlimited', included: true },
         { item: 'Adventure Sports', amount: 'Included', included: true },
         { item: '24/7 Assistance', amount: 'Priority', included: true },
@@ -92,72 +85,72 @@ const TravelInsurancePage = () => {
     {
       icon: Heart,
       title: 'Medical Coverage',
-      title_bn: 'চিকিৎসা কভারেজ',
+      title_bn: 'تغطية طبية',
       description: 'Comprehensive medical expense coverage worldwide',
-      description_bn: 'বিশ্বব্যাপী ব্যাপক চিকিৎসা খরচ কভারেজ'
+      description_bn: 'تغطية شاملة للمصاريف الطبية أثناء السفر حول العالم'
     },
     {
       icon: Plane,
       title: 'Trip Protection',
-      title_bn: 'ট্রিপ প্রোটেকশন',
+      title_bn: 'حماية الرحلة',
       description: 'Coverage for cancellation, delays and interruptions',
-      description_bn: 'বাতিল, বিলম্ব এবং বাধার জন্য কভারেজ'
+      description_bn: 'حماية من الإلغاء والتأخير وتعطل الرحلات'
     },
     {
       icon: Briefcase,
       title: 'Baggage Protection',
-      title_bn: 'ব্যাগেজ প্রোটেকশন',
+      title_bn: 'حماية الأمتعة',
       description: 'Lost, stolen or damaged baggage compensation',
-      description_bn: 'হারানো, চুরি বা ক্ষতিগ্রস্ত ব্যাগেজের ক্ষতিপূরণ'
+      description_bn: 'تعويض عن الأمتعة المفقودة أو المسروقة أو المتضررة'
     },
     {
       icon: AlertTriangle,
       title: 'Emergency Evacuation',
-      title_bn: 'জরুরি সরিয়ে নেওয়া',
+      title_bn: 'إخلاء طارئ',
       description: 'Emergency medical evacuation and repatriation',
-      description_bn: 'জরুরি চিকিৎসা সরিয়ে নেওয়া এবং প্রত্যাবর্তন'
+      description_bn: 'إخلاء طبي طارئ وإعادة إلى الوطن عند الحاجة'
     },
     {
       icon: Phone,
       title: '24/7 Assistance',
-      title_bn: '২৪/৭ সহায়তা',
+      title_bn: 'مساعدة على مدار الساعة',
       description: 'Round the clock global assistance hotline',
-      description_bn: 'সার্বক্ষণিক বিশ্বব্যাপী সহায়তা হটলাইন'
+      description_bn: 'خط دعم عالمي متاح على مدار الساعة'
     },
     {
       icon: FileText,
       title: 'Easy Claims',
-      title_bn: 'সহজ দাবি',
+      title_bn: 'مطالبات سهلة',
       description: 'Simple and fast claims processing',
-      description_bn: 'সহজ এবং দ্রুত দাবি প্রক্রিয়াকরণ'
+      description_bn: 'إجراءات مطالبة واضحة وسريعة'
     }
   ];
 
   const faqs = [
     {
       q: 'What does travel insurance cover?',
-      q_bn: 'ভ্রমণ বীমা কী কভার করে?',
+      q_bn: 'ماذا يغطي تأمين السفر؟',
       a: 'Our travel insurance covers medical expenses, trip cancellation, lost baggage, flight delays, emergency evacuation, and more depending on your plan.',
-      a_bn: 'আমাদের ভ্রমণ বীমা চিকিৎসা খরচ, ট্রিপ বাতিল, হারানো ব্যাগেজ, ফ্লাইট বিলম্ব, জরুরি সরিয়ে নেওয়া এবং আপনার প্ল্যান অনুযায়ী আরও অনেক কিছু কভার করে।'
+      a_bn: 'يغطي تأمين السفر لدينا المصاريف الطبية، وإلغاء الرحلة، وفقدان الأمتعة، وتأخر الرحلات، والإخلاء الطارئ وفقًا للخطة المختارة.'
     },
     {
       q: 'When should I buy travel insurance?',
-      q_bn: 'কখন ভ্রমণ বীমা কিনব?',
+      q_bn: 'متى ينبغي شراء تأمين السفر؟',
       a: 'We recommend purchasing travel insurance as soon as you book your trip to ensure maximum coverage for trip cancellation benefits.',
-      a_bn: 'ট্রিপ বাতিল সুবিধার জন্য সর্বাধিক কভারেজ নিশ্চিত করতে আপনার ট্রিপ বুক করার সাথে সাথেই ভ্রমণ বীমা কেনার পরামর্শ দিই।'
+      a_bn: 'نوصي بشراء التأمين مباشرة بعد حجز الرحلة لضمان أفضل تغطية ممكنة خاصة في حالات الإلغاء.'
     },
     {
       q: 'How do I file a claim?',
-      q_bn: 'কীভাবে দাবি করব?',
+      q_bn: 'كيف أقدّم مطالبة؟',
       a: 'You can file a claim through our online portal or by contacting our 24/7 assistance hotline. Keep all receipts and documentation.',
-      a_bn: 'আপনি আমাদের অনলাইন পোর্টালের মাধ্যমে বা আমাদের ২৪/৭ সহায়তা হটলাইনে যোগাযোগ করে দাবি করতে পারেন। সমস্ত রসিদ এবং ডকুমেন্টেশন রাখুন।'
+      a_bn: 'يمكنك تقديم المطالبة عبر البوابة الإلكترونية أو بالتواصل مع فريق الدعم، مع الاحتفاظ بجميع الإيصالات والمستندات.'
     }
   ];
 
   return (
     <>
       <Helmet>
-        <title>{language === 'bn' ? 'ভ্রমণ বীমা' : 'Travel Insurance'} | Explore Holidays</title>
+        <title>{language === 'bn' ? 'تأمين السفر' : 'Travel Insurance'} | Sabir Travels</title>
       </Helmet>
 
       <div className={`min-h-screen ${isDark ? 'bg-slate-950' : 'bg-gray-50'}`}>
@@ -192,25 +185,25 @@ const TravelInsurancePage = () => {
                 <Shield className="w-10 h-10 text-white" />
               </motion.div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6">
-                {language === 'bn' ? 'ভ্রমণ বীমা' : 'Travel Insurance'}
+                {language === 'bn' ? 'تأمين السفر' : 'Travel Insurance'}
               </h1>
               <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
                 {language === 'bn' 
-                  ? 'আপনার ভ্রমণকে সুরক্ষিত করুন ব্যাপক কভারেজের সাথে। নিশ্চিন্তে ভ্রমণ করুন।'
+                  ? 'احمِ رحلتك بتغطية شاملة تمنحك راحة البال قبل السفر وأثناءه.'
                   : 'Protect your journey with comprehensive coverage. Travel with peace of mind.'}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <div className="flex items-center gap-2 text-white/90">
                   <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>{language === 'bn' ? 'তাৎক্ষণিক কভারেজ' : 'Instant Coverage'}</span>
+                  <span>{language === 'bn' ? 'تغطية فورية' : 'Instant Coverage'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/90">
                   <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>{language === 'bn' ? 'বিশ্বব্যাপী' : 'Worldwide'}</span>
+                  <span>{language === 'bn' ? 'تغطية عالمية' : 'Worldwide'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/90">
                   <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>{language === 'bn' ? '২৪/৭ সহায়তা' : '24/7 Support'}</span>
+                  <span>{language === 'bn' ? 'دعم 24/7' : '24/7 Support'}</span>
                 </div>
               </div>
             </motion.div>
@@ -267,10 +260,10 @@ const TravelInsurancePage = () => {
                   : 'bg-slate-900 text-white'
               }`}>
                 <Sparkles className="w-4 h-4 mr-2" />
-                {language === 'bn' ? 'প্ল্যান সমূহ' : 'Insurance Plans'}
+                {language === 'bn' ? 'خطط التأمين' : 'Insurance Plans'}
               </span>
               <h2 className={`text-3xl sm:text-4xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'bn' ? 'আপনার জন্য সঠিক প্ল্যান বেছে নিন' : 'Choose the Right Plan for You'}
+                {language === 'bn' ? 'اختر الخطة المناسبة لك' : 'Choose the Right Plan for You'}
               </h2>
             </motion.div>
 
@@ -295,7 +288,7 @@ const TravelInsurancePage = () => {
                     <div className={`absolute top-0 left-0 right-0 py-2 text-center text-sm font-bold text-white ${
                       useGradients ? `bg-gradient-to-r ${plan.color}` : 'bg-slate-900'
                     }`}>
-                      {language === 'bn' ? 'সবচেয়ে জনপ্রিয়' : 'Most Popular'}
+                      {language === 'bn' ? 'الأكثر طلبًا' : 'Most Popular'}
                     </div>
                   )}
                   
@@ -312,7 +305,7 @@ const TravelInsurancePage = () => {
                         {formatCurrency(plan.price)}
                       </span>
                       <span className={`ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        /{plan.duration}
+                        /{language === 'bn' ? 'لكل رحلة' : plan.duration}
                       </span>
                     </div>
 
@@ -357,7 +350,7 @@ const TravelInsurancePage = () => {
                             : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                       }`}
                     >
-                      {language === 'bn' ? 'এখনই কিনুন' : 'Buy Now'}
+                      {language === 'bn' ? 'اشترِ الآن' : 'Buy Now'}
                     </motion.button>
                   </div>
                 </motion.div>
@@ -376,7 +369,7 @@ const TravelInsurancePage = () => {
               className="text-center mb-12"
             >
               <h2 className={`text-3xl sm:text-4xl font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'bn' ? 'সচরাচর জিজ্ঞাসা' : 'Frequently Asked Questions'}
+                {language === 'bn' ? 'الأسئلة الشائعة' : 'Frequently Asked Questions'}
               </h2>
             </motion.div>
 
@@ -410,29 +403,29 @@ const TravelInsurancePage = () => {
         }`}>
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-6">
-              {language === 'bn' ? 'সাহায্য দরকার?' : 'Need Help?'}
+              {language === 'bn' ? 'هل تحتاج إلى مساعدة؟' : 'Need Help?'}
             </h2>
             <p className="text-white/80 mb-8 text-lg">
               {language === 'bn' 
-                ? 'আমাদের বিশেষজ্ঞরা আপনাকে সঠিক বীমা প্ল্যান বেছে নিতে সাহায্য করবে'
+                ? 'يساعدك خبراؤنا في اختيار خطة التأمين الأنسب لوجهتك ومدة رحلتك'
                 : 'Our experts will help you choose the right insurance plan'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
-                href="tel:+8801234567890"
+                href="tel:+966551234567"
                 whileHover={{ scale: 1.05 }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-bold rounded-xl hover:shadow-xl transition-all"
               >
                 <Phone className="w-5 h-5" />
-                +880 1234-567890
+                +966 55 123 4567
               </motion.a>
               <motion.a
-                href="mailto:insurance@exploreholidays.com"
+                href="mailto:insurance@sabirtravels.sa"
                 whileHover={{ scale: 1.05 }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
               >
                 <Mail className="w-5 h-5" />
-                insurance@exploreholidays.com
+                insurance@sabirtravels.sa
               </motion.a>
             </div>
           </div>

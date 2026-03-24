@@ -221,6 +221,10 @@ body.dark .card-premium:hover {
   font-family: 'Noto Sans Bengali', sans-serif;
 }
 
+ .font-arabic {
+  font-family: 'Noto Sans Arabic', 'Tahoma', sans-serif;
+ }
+
 /* Price Tag */
 .price-tag {
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);

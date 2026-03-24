@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,109 +13,26 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
-import { useGradient } from '../context/GradientContext';
 
 const HolidaysPage = () => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const { language, formatCurrency } = useLanguage();
-  const { useGradients, getButtonClass, getCardClass } = useGradient();
   const [packages, setPackages] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Simulated data
-    setPackages([
-      {
-        id: 1,
-        title: "Cox's Bazar Beach Paradise",
-        title_bn: "কক্সবাজার সমুদ্র সৈকত প্যারাডাইস",
-        destination: "Cox's Bazar",
-        price: 25000,
-        duration: "3 Days / 2 Nights",
-        image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-        category: "beach",
-        rating: 4.8
-      },
-      {
-        id: 2,
-        title: "Maldives Luxury Escape",
-        title_bn: "মালদ্বীপ বিলাসবহুল অবকাশ",
-        destination: "Maldives",
-        price: 150000,
-        duration: "5 Days / 4 Nights",
-        image_url: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800",
-        category: "beach",
-        rating: 4.9
-      },
-      {
-        id: 3,
-        title: "Dubai City Explorer",
-        title_bn: "দুবাই সিটি এক্সপ্লোরার",
-        destination: "Dubai",
-        price: 85000,
-        duration: "4 Days / 3 Nights",
-        image_url: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800",
-        category: "city",
-        rating: 4.7
-      },
-      {
-        id: 4,
-        title: "Thailand Adventure",
-        title_bn: "থাইল্যান্ড অ্যাডভেঞ্চার",
-        destination: "Thailand",
-        price: 65000,
-        duration: "5 Days / 4 Nights",
-        image_url: "https://images.unsplash.com/photo-1528181304800-259b08848526?w=800",
-        category: "adventure",
-        rating: 4.6
-      },
-      {
-        id: 5,
-        title: "Singapore Delight",
-        title_bn: "সিঙ্গাপুর ডিলাইট",
-        destination: "Singapore",
-        price: 95000,
-        duration: "4 Days / 3 Nights",
-        image_url: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800",
-        category: "city",
-        rating: 4.8
-      },
-      {
-        id: 6,
-        title: "Sundarbans Safari",
-        title_bn: "সুন্দরবন সাফারি",
-        destination: "Sundarbans",
-        price: 35000,
-        duration: "4 Days / 3 Nights",
-        image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
-        category: "adventure",
-        rating: 4.5
-      },
-      {
-        id: 7,
-        title: "Malaysia Explorer",
-        title_bn: "মালয়েশিয়া এক্সপ্লোরার",
-        destination: "Malaysia",
-        price: 75000,
-        duration: "5 Days / 4 Nights",
-        image_url: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800",
-        category: "city",
-        rating: 4.6
-      },
-      {
-        id: 8,
-        title: "Bali Romantic Getaway",
-        title_bn: "বালি রোমান্টিক গেটওয়ে",
-        destination: "Bali",
-        price: 120000,
-        duration: "6 Days / 5 Nights",
-        image_url: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
-        category: "beach",
-        rating: 4.9
+    const fetchPackages = async () => {
+      try {
+        const response = await axios.get('/api/packages');
+        setPackages(response.data.data);
+      } catch (error) {
+        setPackages([]);
       }
-    ]);
+    };
+
+    fetchPackages();
   }, []);
 
   const filteredPackages = packages.filter(pkg => {

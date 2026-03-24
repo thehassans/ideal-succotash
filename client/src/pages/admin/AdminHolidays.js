@@ -1,11 +1,43 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Package, Plus, Edit, Trash2, Save, X, Image, MapPin, Clock, 
-  DollarSign, Users, Star, Calendar, Check, ChevronDown, Eye,
-  Upload, GripVertical, List, Grid, Search, Filter, RotateCcw
+  Plus, Edit, Trash2, Save, X, Image, MapPin, Clock,
+  Star, Check, Upload, List, Grid, Search, RotateCcw
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useLanguage } from '../../context/LanguageContext';
+import { SAUDI_RIYAL_SYMBOL } from '../../utils/currency';
+
+const normalizeEditorPackage = (pkg) => ({
+  ...pkg,
+  price: pkg.regularPrice || pkg.originalPrice || pkg.price || 0,
+  discountPrice: pkg.discountPrice || pkg.price || pkg.regularPrice || pkg.originalPrice || 0,
+  image: pkg.image || pkg.image_url || pkg.images?.[0] || pkg.gallery?.[0] || '',
+  gallery: Array.isArray(pkg.gallery) ? pkg.gallery : (Array.isArray(pkg.images) ? pkg.images : []),
+  included: Array.isArray(pkg.included) ? pkg.included : [],
+  notIncluded: Array.isArray(pkg.notIncluded) ? pkg.notIncluded : [],
+  itinerary: Array.isArray(pkg.itinerary)
+    ? pkg.itinerary.map((item, index) => ({
+        day: item.day || index + 1,
+        title: item.title || `Day ${index + 1}`,
+        description: item.description || (Array.isArray(item.activities) ? item.activities.join(', ') : '')
+      }))
+    : []
+});
+
+const buildPackagePayload = (pkg) => ({
+  ...pkg,
+  image_url: pkg.image,
+  featured: pkg.featured,
+  popular: pkg.popular,
+  active: pkg.active,
+  itinerary: (pkg.itinerary || []).map((item, index) => ({
+    day: item.day || index + 1,
+    title: item.title,
+    description: item.description
+  }))
+});
 
 const AdminHolidays = () => {
   // Get theme from localStorage
@@ -27,6 +59,7 @@ const AdminHolidays = () => {
       clearInterval(interval);
     };
   }, []);
+  const { formatCurrency } = useLanguage();
   const [packages, setPackages] = useState(() => {
     const saved = localStorage.getItem('holidayPackages');
     return saved ? JSON.parse(saved) : [
@@ -285,6 +318,7 @@ const AdminHolidays = () => {
     ];
   });
 
+  const [loadingPackages, setLoadingPackages] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -292,7 +326,6 @@ const AdminHolidays = () => {
   const [activeEditorTab, setActiveEditorTab] = useState('basic');
 
   const emptyPackage = {
-    id: null,
     title: '',
     destination: '',
     duration: '',
@@ -312,24 +345,63 @@ const AdminHolidays = () => {
     itinerary: []
   };
 
-  useEffect(() => {
-    localStorage.setItem('holidayPackages', JSON.stringify(packages));
-  }, [packages]);
-
-  const handleSavePackage = () => {
-    if (editingPackage.id) {
-      setPackages(prev => prev.map(p => p.id === editingPackage.id ? editingPackage : p));
-    } else {
-      const newId = Math.max(...packages.map(p => p.id), 0) + 1;
-      setPackages(prev => [...prev, { ...editingPackage, id: newId }]);
+  const fetchPackages = async () => {
+    try {
+      setLoadingPackages(true);
+      const response = await axios.get('/api/admin/packages');
+      setPackages(response.data.data.map(normalizeEditorPackage));
+      localStorage.setItem('holidayPackages', JSON.stringify(response.data.data.map(normalizeEditorPackage)));
+    } catch (error) {
+      const saved = localStorage.getItem('holidayPackages');
+      if (saved) {
+        setPackages(JSON.parse(saved));
+      }
+    } finally {
+      setLoadingPackages(false);
     }
-    setShowEditor(false);
-    setEditingPackage(null);
   };
 
-  const handleDeletePackage = (id) => {
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const handleSavePackage = async () => {
+    try {
+      const payload = buildPackagePayload(editingPackage);
+      const response = editingPackage.id
+        ? await axios.put(`/api/admin/packages/${editingPackage.id}`, payload)
+        : await axios.post('/api/admin/packages', payload);
+
+      const updatedPackage = normalizeEditorPackage(response.data.data);
+
+      setPackages(prev => {
+        const exists = prev.some(p => p.id === updatedPackage.id);
+        const nextPackages = exists
+          ? prev.map(p => p.id === updatedPackage.id ? updatedPackage : p)
+          : [updatedPackage, ...prev];
+        localStorage.setItem('holidayPackages', JSON.stringify(nextPackages));
+        return nextPackages;
+      });
+
+      setShowEditor(false);
+      setEditingPackage(null);
+    } catch (error) {
+      alert('Failed to save package');
+    }
+  };
+
+  const handleDeletePackage = async (id) => {
     if (window.confirm('Are you sure you want to delete this package?')) {
-      setPackages(prev => prev.filter(p => p.id !== id));
+      try {
+        await axios.delete(`/api/admin/packages/${id}`);
+        setPackages(prev => {
+          const nextPackages = prev.filter(p => p.id !== id);
+          localStorage.setItem('holidayPackages', JSON.stringify(nextPackages));
+          return nextPackages;
+        });
+      } catch (error) {
+        alert('Failed to delete package');
+      }
     }
   };
 
@@ -467,14 +539,13 @@ const AdminHolidays = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className={`text-2xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Holiday Packages</h1>
-            <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Manage your travel packages and destinations ({packages.length} packages)</p>
+            <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Manage your travel packages and destinations ({loadingPackages ? '...' : packages.length} packages)</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => {
-                if (window.confirm('Reset to default packages? This will load all 10+ destinations.')) {
-                  localStorage.removeItem('holidayPackages');
-                  window.location.reload();
+                if (window.confirm('Reload packages from the server?')) {
+                  fetchPackages();
                 }
               }}
               className={`px-4 py-2.5 font-medium rounded-xl flex items-center gap-2 transition-colors ${
@@ -579,9 +650,9 @@ const AdminHolidays = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-primary-500 font-bold text-lg">৳{pkg.discountPrice?.toLocaleString()}</span>
+                    <span className="text-primary-500 font-bold text-lg">{formatCurrency(pkg.discountPrice)}</span>
                     {pkg.price !== pkg.discountPrice && (
-                      <span className={`line-through text-sm ml-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>৳{pkg.price?.toLocaleString()}</span>
+                      <span className={`line-through text-sm ml-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{formatCurrency(pkg.price)}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
@@ -803,7 +874,7 @@ const AdminHolidays = () => {
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Regular Price (৳)</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Regular Price ({SAUDI_RIYAL_SYMBOL})</label>
                           <input
                             type="number"
                             value={editingPackage.price}
@@ -812,7 +883,7 @@ const AdminHolidays = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Discount Price (৳)</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Discount Price ({SAUDI_RIYAL_SYMBOL})</label>
                           <input
                             type="number"
                             value={editingPackage.discountPrice}

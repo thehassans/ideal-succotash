@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MapPin, 
   Clock, 
-  Calendar, 
   Users, 
   Star, 
   Check, 
@@ -28,7 +28,55 @@ import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingContext';
-import { useGradient } from '../context/GradientContext';
+
+const includeIconMap = {
+  Hotel,
+  Utensils,
+  Plane,
+  Camera,
+  Users,
+  Shield,
+  Check
+};
+
+const normalizePackageDetails = (pkg) => ({
+  ...pkg,
+  originalPrice: pkg.originalPrice || pkg.regularPrice || pkg.price || 0,
+  reviews: pkg.reviews || pkg.reviews_count || 0,
+  images: Array.isArray(pkg.images) && pkg.images.length > 0
+    ? pkg.images
+    : [pkg.image || pkg.image_url].filter(Boolean),
+  highlights: Array.isArray(pkg.highlights)
+    ? pkg.highlights.map((item) => typeof item === 'string' ? { text: item, text_bn: item } : item)
+    : [],
+  includes: Array.isArray(pkg.includes) && pkg.includes.length > 0
+    ? pkg.includes.map((item) => ({
+        ...item,
+        icon: typeof item.icon === 'string'
+          ? includeIconMap[item.icon] || Check
+          : item.icon || Check,
+        text: item.text || item,
+        text_bn: item.text_bn || item.text || item
+      }))
+    : (Array.isArray(pkg.included) ? pkg.included.map((item) => ({ icon: Check, text: item, text_bn: item })) : []),
+  itinerary: Array.isArray(pkg.itinerary)
+    ? pkg.itinerary.map((item, index) => ({
+        day: item.day || index + 1,
+        title: item.title || `Day ${index + 1}`,
+        title_bn: item.title_bn || item.title || `Day ${index + 1}`,
+        activities: Array.isArray(item.activities) ? item.activities : (item.description ? [item.description] : []),
+        activities_bn: Array.isArray(item.activities_bn)
+          ? item.activities_bn
+          : (Array.isArray(item.activities) ? item.activities : (item.description ? [item.description] : []))
+      }))
+    : [],
+  cityHistory: pkg.cityHistory || pkg.aboutDestination || '',
+  cityHistory_bn: pkg.cityHistory_bn || pkg.aboutDestination_bn || '',
+  description: pkg.description || pkg.overview || '',
+  description_bn: pkg.description_bn || pkg.overview_bn || '',
+  destination_bn: pkg.destination_bn || pkg.destination,
+  title_bn: pkg.title_bn || pkg.title
+});
 
 const PackageDetailPage = () => {
   const { id } = useParams();
@@ -37,7 +85,6 @@ const PackageDetailPage = () => {
   const { language, formatCurrency } = useLanguage();
   const { user, isAuthenticated } = useAuth();
   const { addBooking } = useBooking();
-  const { useGradients } = useGradient();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -48,377 +95,340 @@ const PackageDetailPage = () => {
     specialRequests: ''
   });
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [packageDetails, setPackageDetails] = useState(null);
+  const [loadingPackage, setLoadingPackage] = useState(true);
 
-  // Check if package is wishlisted on load
   useEffect(() => {
-    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    setIsWishlisted(wishlist.some(item => item.id === id));
+    const fetchPackage = async () => {
+      try {
+        setLoadingPackage(true);
+        const response = await axios.get(`/api/packages/${id}`);
+        setPackageDetails(normalizePackageDetails(response.data.data));
+        setSelectedImage(0);
+      } catch (error) {
+        setPackageDetails(null);
+      } finally {
+        setLoadingPackage(false);
+      }
+    };
+
+    fetchPackage();
   }, [id]);
 
-  // Sample package data - in real app, fetch from API based on id
-  const packageData = {
+  const fallbackPackages = {
     1: {
-      title: "Cox's Bazar Beach Paradise",
-      title_bn: "কক্সবাজার সমুদ্র সৈকত প্যারাডাইস",
-      destination: "Cox's Bazar, Bangladesh",
-      destination_bn: "কক্সবাজার, বাংলাদেশ",
-      price: 25000,
-      originalPrice: 32000,
-      duration: "3 Days / 2 Nights",
-      duration_bn: "৩ দিন / ২ রাত",
+      id: '1',
+      title: 'Dubai City Explorer',
+      title_bn: 'رحلة استكشاف دبي',
+      destination: 'Dubai, UAE',
+      destination_bn: 'دبي، الإمارات',
+      price: 85000,
+      originalPrice: 98000,
+      duration: '4 Days / 3 Nights',
+      duration_bn: '4 أيام / 3 ليال',
       rating: 4.9,
       reviews: 256,
-      maxPeople: 20,
+      maxPeople: 12,
       featured: true,
       popular: true,
       images: [
         'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
         'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800',
-        'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800',
-        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
+        'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800'
       ],
-      description: "Experience the world's longest natural sandy beach at Cox's Bazar. Enjoy breathtaking sunrises, fresh seafood, and the serene beauty of the Bay of Bengal. This premium package includes luxury accommodation, guided tours, and unforgettable experiences.",
-      description_bn: "বিশ্বের দীর্ঘতম প্রাকৃতিক বালুকাময় সমুদ্র সৈকত কক্সবাজারে অভিজ্ঞতা অর্জন করুন। মনোমুগ্ধকর সূর্যোদয়, তাজা সামুদ্রিক খাবার এবং বঙ্গোপসাগরের শান্ত সৌন্দর্য উপভোগ করুন।",
+      description: 'Experience Dubai with iconic attractions, premium accommodation, and curated city experiences.',
+      description_bn: 'استمتع بأبرز معالم دبي مع إقامة مميزة وتجارب مدينة مختارة بعناية من Sabir Travels.',
       highlights: [
-        { text: "World's Longest Beach", text_bn: "বিশ্বের দীর্ঘতম সমুদ্র সৈকত" },
-        { text: "Luxury Beach Resort Stay", text_bn: "বিলাসবহুল বিচ রিসোর্ট থাকা" },
-        { text: "Inani Beach Visit", text_bn: "ইনানী সমুদ্র সৈকত পরিদর্শন" },
-        { text: "Himchari Waterfall Tour", text_bn: "হিমছড়ি জলপ্রপাত ভ্রমণ" },
-        { text: "Fresh Seafood Experience", text_bn: "তাজা সামুদ্রিক খাবার অভিজ্ঞতা" },
-        { text: "Sunset Cruise (Optional)", text_bn: "সূর্যাস্ত ক্রুজ (ঐচ্ছিক)" },
+        { text: 'Burj Khalifa Visit', text_bn: 'زيارة برج خليفة' },
+        { text: 'Luxury City Hotel', text_bn: 'إقامة فندقية راقية' },
+        { text: 'Desert Safari', text_bn: 'سفاري الصحراء' }
       ],
       includes: [
-        { icon: Hotel, text: "3-Star Hotel Accommodation", text_bn: "৩-তারা হোটেল থাকার ব্যবস্থা" },
-        { icon: Utensils, text: "Breakfast & Dinner", text_bn: "সকালের নাস্তা ও রাতের খাবার" },
-        { icon: Plane, text: "Airport Transfers", text_bn: "বিমানবন্দর পরিবহন" },
-        { icon: Camera, text: "Sightseeing Tours", text_bn: "দর্শনীয় স্থান ভ্রমণ" },
-        { icon: Users, text: "Professional Guide", text_bn: "পেশাদার গাইড" },
-        { icon: Shield, text: "Travel Insurance", text_bn: "ভ্রমণ বীমা" },
+        { icon: Hotel, text: 'Hotel Accommodation', text_bn: 'إقامة فندقية' },
+        { icon: Utensils, text: 'Breakfast Included', text_bn: 'إفطار يومي' },
+        { icon: Camera, text: 'Sightseeing Tours', text_bn: 'جولات سياحية' }
       ],
       itinerary: [
-        {
-          day: 1,
-          title: "Arrival & Beach Exploration",
-          title_bn: "আগমন ও সমুদ্র সৈকত অন্বেষণ",
-          activities: [
-            "Arrival at Cox's Bazar Airport/Bus Station",
-            "Check-in to luxury beach resort",
-            "Welcome drink and orientation",
-            "Evening beach walk and sunset viewing",
-            "Dinner at beachfront restaurant"
-          ],
-          activities_bn: [
-            "কক্সবাজার বিমানবন্দর/বাস স্টেশনে পৌঁছানো",
-            "বিলাসবহুল বিচ রিসোর্টে চেক-ইন",
-            "স্বাগত পানীয় এবং ওরিয়েন্টেশন",
-            "সন্ধ্যায় সমুদ্র সৈকতে হাঁটা এবং সূর্যাস্ত দেখা",
-            "সমুদ্র তীরের রেস্তোরাঁয় রাতের খাবার"
-          ]
-        },
-        {
-          day: 2,
-          title: "Full Day Sightseeing",
-          title_bn: "সারাদিন দর্শনীয় স্থান পরিদর্শন",
-          activities: [
-            "Breakfast at hotel",
-            "Visit to Himchari National Park & Waterfall",
-            "Explore Inani Beach with coral stones",
-            "Lunch at local restaurant",
-            "Marine Drive scenic tour",
-            "Shopping at Burmese Market",
-            "Dinner and bonfire at beach (seasonal)"
-          ],
-          activities_bn: [
-            "হোটেলে সকালের নাস্তা",
-            "হিমছড়ি জাতীয় উদ্যান ও জলপ্রপাত পরিদর্শন",
-            "প্রবাল পাথর সহ ইনানী সমুদ্র সৈকত অন্বেষণ",
-            "স্থানীয় রেস্তোরাঁয় দুপুরের খাবার",
-            "মেরিন ড্রাইভ দর্শনীয় ভ্রমণ",
-            "বার্মিজ মার্কেটে কেনাকাটা",
-            "সমুদ্র সৈকতে রাতের খাবার এবং বনফায়ার (মৌসুমী)"
-          ]
-        },
-        {
-          day: 3,
-          title: "Leisure & Departure",
-          title_bn: "অবসর ও প্রস্থান",
-          activities: [
-            "Breakfast at hotel",
-            "Free time for beach activities",
-            "Optional: Parasailing or Jet Ski",
-            "Check-out and departure",
-            "Transfer to airport/bus station"
-          ],
-          activities_bn: [
-            "হোটেলে সকালের নাস্তা",
-            "সমুদ্র সৈকত কার্যক্রমের জন্য অবসর সময়",
-            "ঐচ্ছিক: প্যারাসেইলিং বা জেট স্কি",
-            "চেক-আউট এবং প্রস্থান",
-            "বিমানবন্দর/বাস স্টেশনে স্থানান্তর"
-          ]
-        }
+        { day: 1, title: 'Arrival in Dubai', title_bn: 'الوصول إلى دبي', activities: ['Airport pickup', 'Hotel check-in', 'Evening at Dubai Marina'], activities_bn: ['استقبال من المطار', 'تسجيل الدخول للفندق', 'أمسية في مرسى دبي'] },
+        { day: 2, title: 'City Discovery', title_bn: 'استكشاف المدينة', activities: ['Breakfast', 'Burj Khalifa area', 'Dubai Mall'], activities_bn: ['إفطار', 'زيارة منطقة برج خليفة', 'دبي مول'] },
+        { day: 3, title: 'Desert Experience', title_bn: 'تجربة الصحراء', activities: ['Desert safari', 'Traditional dinner', 'Cultural show'], activities_bn: ['سفاري الصحراء', 'عشاء تقليدي', 'عرض ثقافي'] },
+        { day: 4, title: 'Departure', title_bn: 'المغادرة', activities: ['Free time', 'Check-out', 'Airport transfer'], activities_bn: ['وقت حر', 'تسجيل الخروج', 'الانتقال إلى المطار'] }
       ],
-      cityHistory: "Cox's Bazar, named after Captain Hiram Cox, is home to the world's longest unbroken natural sandy beach stretching 120 km. The area has a rich history dating back to the 9th century when it was ruled by various kingdoms. Today, it's Bangladesh's most popular tourist destination, known for its stunning beaches, Buddhist temples, and vibrant local culture.",
-      cityHistory_bn: "ক্যাপ্টেন হিরাম কক্সের নামে নামকরণ করা কক্সবাজার বিশ্বের দীর্ঘতম অবিচ্ছিন্ন প্রাকৃতিক বালুকাময় সমুদ্র সৈকতের আবাসস্থল যা ১২০ কিমি বিস্তৃত। এই অঞ্চলের সমৃদ্ধ ইতিহাস রয়েছে যা ৯ম শতাব্দীতে বিভিন্ন রাজ্যের শাসনের সময় থেকে শুরু। আজ, এটি বাংলাদেশের সবচেয়ে জনপ্রিয় পর্যটন গন্তব্য।"
+      cityHistory: 'Dubai is a global destination known for luxury hospitality, modern skylines, desert adventures, and world-class shopping.',
+      cityHistory_bn: 'دبي وجهة عالمية تجمع بين الحداثة الفاخرة والضيافة الراقية والتجارب الصحراوية والتسوق العالمي.'
     },
     2: {
-      title: "Sundarbans Mangrove Adventure",
-      title_bn: "সুন্দরবন ম্যানগ্রোভ অ্যাডভেঞ্চার",
-      destination: "Sundarbans, Bangladesh",
-      destination_bn: "সুন্দরবন, বাংলাদেশ",
-      price: 35000,
-      originalPrice: 42000,
-      duration: "4 Days / 3 Nights",
-      duration_bn: "৪ দিন / ৩ রাত",
-      rating: 4.8,
-      reviews: 189,
-      maxPeople: 15,
-      featured: true,
-      popular: true,
-      images: [
-        'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=800',
-        'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800',
-        'https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=800',
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-      ],
-      description: "Explore the world's largest mangrove forest and UNESCO World Heritage Site. Witness the majestic Royal Bengal Tigers, diverse wildlife, and unique ecosystem. This adventure package offers an unforgettable journey through nature's wonder.",
-      description_bn: "বিশ্বের বৃহত্তম ম্যানগ্রোভ বন এবং ইউনেস্কো বিশ্ব ঐতিহ্যবাহী স্থান অন্বেষণ করুন। মহিমান্বিত রয়েল বেঙ্গল টাইগার, বৈচিত্র্যময় বন্যপ্রাণী এবং অনন্য বাস্তুতন্ত্র দেখুন।",
-      highlights: [
-        { text: "UNESCO World Heritage Site", text_bn: "ইউনেস্কো বিশ্ব ঐতিহ্যবাহী স্থান" },
-        { text: "Royal Bengal Tiger Spotting", text_bn: "রয়েল বেঙ্গল টাইগার দেখা" },
-        { text: "Boat Safari Experience", text_bn: "নৌকা সাফারি অভিজ্ঞতা" },
-        { text: "Bird Watching", text_bn: "পাখি দেখা" },
-        { text: "Fishing Village Visit", text_bn: "মাছ ধরার গ্রাম পরিদর্শন" },
-        { text: "Night Stay in Forest", text_bn: "বনে রাত কাটানো" },
-      ],
-      includes: [
-        { icon: Hotel, text: "Boat Cabin Accommodation", text_bn: "নৌকা কেবিন থাকার ব্যবস্থা" },
-        { icon: Utensils, text: "All Meals Included", text_bn: "সব খাবার অন্তর্ভুক্ত" },
-        { icon: Plane, text: "Transport from Dhaka", text_bn: "ঢাকা থেকে পরিবহন" },
-        { icon: Camera, text: "Wildlife Safari", text_bn: "বন্যপ্রাণী সাফারি" },
-        { icon: Users, text: "Expert Naturalist Guide", text_bn: "বিশেষজ্ঞ প্রকৃতিবিদ গাইড" },
-        { icon: Shield, text: "Safety Equipment", text_bn: "নিরাপত্তা সরঞ্জাম" },
-      ],
-      itinerary: [
-        {
-          day: 1,
-          title: "Journey to Sundarbans",
-          title_bn: "সুন্দরবনে যাত্রা",
-          activities: [
-            "Early morning departure from Dhaka",
-            "Arrive at Mongla Port",
-            "Board the cruise boat",
-            "Lunch on boat",
-            "Enter Sundarbans",
-            "Evening wildlife viewing",
-            "Dinner and overnight on boat"
-          ],
-          activities_bn: [
-            "ঢাকা থেকে সকালে রওনা",
-            "মংলা বন্দরে পৌঁছানো",
-            "ক্রুজ বোটে আরোহণ",
-            "নৌকায় দুপুরের খাবার",
-            "সুন্দরবনে প্রবেশ",
-            "সন্ধ্যায় বন্যপ্রাণী দেখা",
-            "রাতের খাবার এবং নৌকায় রাত কাটানো"
-          ]
-        },
-        {
-          day: 2,
-          title: "Deep Forest Exploration",
-          title_bn: "গভীর বন অন্বেষণ",
-          activities: [
-            "Sunrise wildlife viewing",
-            "Breakfast on boat",
-            "Kotka Wildlife Sanctuary visit",
-            "Walking trail in forest",
-            "Lunch break",
-            "Kachikhali Tiger Point",
-            "Evening bird watching",
-            "Dinner on boat"
-          ],
-          activities_bn: [
-            "সূর্যোদয়ের সময় বন্যপ্রাণী দেখা",
-            "নৌকায় সকালের নাস্তা",
-            "কটকা বন্যপ্রাণী অভয়ারণ্য পরিদর্শন",
-            "বনে হাঁটার পথ",
-            "দুপুরের খাবারের বিরতি",
-            "কচিখালী টাইগার পয়েন্ট",
-            "সন্ধ্যায় পাখি দেখা",
-            "নৌকায় রাতের খাবার"
-          ]
-        },
-        {
-          day: 3,
-          title: "Mangrove Discovery",
-          title_bn: "ম্যানগ্রোভ আবিষ্কার",
-          activities: [
-            "Early morning tiger tracking",
-            "Jamtala Sea Beach",
-            "Fishing village interaction",
-            "Dublar Char visit",
-            "Honey collector's demonstration",
-            "Traditional fishing experience",
-            "Final night celebration"
-          ],
-          activities_bn: [
-            "সকালে বাঘ অনুসন্ধান",
-            "জামতলা সমুদ্র সৈকত",
-            "মাছ ধরার গ্রামে মিথস্ক্রিয়া",
-            "দুবলার চর পরিদর্শন",
-            "মধু সংগ্রাহকের প্রদর্শন",
-            "ঐতিহ্যবাহী মাছ ধরার অভিজ্ঞতা",
-            "শেষ রাতের উদযাপন"
-          ]
-        },
-        {
-          day: 4,
-          title: "Return Journey",
-          title_bn: "ফেরার যাত্রা",
-          activities: [
-            "Sunrise view from boat",
-            "Final forest glimpse",
-            "Breakfast",
-            "Depart from Sundarbans",
-            "Arrive at Mongla",
-            "Return to Dhaka"
-          ],
-          activities_bn: [
-            "নৌকা থেকে সূর্যোদয় দেখা",
-            "বনের শেষ দেখা",
-            "সকালের নাস্তা",
-            "সুন্দরবন থেকে রওনা",
-            "মংলায় পৌঁছানো",
-            "ঢাকায় ফেরত"
-          ]
-        }
-      ],
-      cityHistory: "The Sundarbans is the largest mangrove forest in the world, spanning across Bangladesh and India. It's a UNESCO World Heritage Site and home to the famous Royal Bengal Tiger. The forest has been protected since the early 20th century and supports a unique ecosystem with diverse flora and fauna, including rare species found nowhere else on Earth.",
-      cityHistory_bn: "সুন্দরবন বিশ্বের বৃহত্তম ম্যানগ্রোভ বন, যা বাংলাদেশ এবং ভারত জুড়ে বিস্তৃত। এটি ইউনেস্কো বিশ্ব ঐতিহ্যবাহী স্থান এবং বিখ্যাত রয়েল বেঙ্গল টাইগারের আবাসস্থল।"
-    },
-    3: {
-      title: "Maldives Luxury Escape",
-      title_bn: "মালদ্বীপ বিলাসবহুল অবকাশ",
-      destination: "Maldives",
-      destination_bn: "মালদ্বীপ",
+      id: '2',
+      title: 'Maldives Luxury Escape',
+      title_bn: 'عطلة فاخرة في المالديف',
+      destination: 'Maldives',
+      destination_bn: 'المالديف',
       price: 150000,
       originalPrice: 180000,
-      duration: "5 Days / 4 Nights",
-      duration_bn: "৫ দিন / ৪ রাত",
-      rating: 5.0,
-      reviews: 342,
-      maxPeople: 2,
+      duration: '5 Days / 4 Nights',
+      duration_bn: '5 أيام / 4 ليال',
+      rating: 4.8,
+      reviews: 189,
+      maxPeople: 6,
       featured: true,
       popular: true,
       images: [
         'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800',
-        'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800',
-        'https://images.unsplash.com/photo-1540202404-a2f29016b523?w=800',
-        'https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=800',
+        'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800'
       ],
-      description: "Indulge in the ultimate tropical paradise experience at Maldives. Crystal clear waters, overwater villas, world-class diving, and unparalleled luxury await you in this honeymoon special package.",
-      description_bn: "মালদ্বীপে চূড়ান্ত গ্রীষ্মমণ্ডলীয় স্বর্গের অভিজ্ঞতা উপভোগ করুন। স্ফটিক স্বচ্ছ জল, ওভারওয়াটার ভিলা, বিশ্বমানের ডাইভিং এবং অতুলনীয় বিলাসিতা আপনার জন্য অপেক্ষা করছে।",
+      description: 'Relax in a luxury island resort with turquoise waters, private villa comfort, and unforgettable ocean views.',
+      description_bn: 'استرخِ في منتجع جزيري فاخر مع مياه فيروزية وإقامة راقية وإطلالات بحرية لا تُنسى.',
       highlights: [
-        { text: "Overwater Villa Stay", text_bn: "ওভারওয়াটার ভিলায় থাকা" },
-        { text: "Private Beach Access", text_bn: "প্রাইভেট বিচে প্রবেশ" },
-        { text: "Snorkeling & Diving", text_bn: "স্নরকেলিং ও ডাইভিং" },
-        { text: "Sunset Dolphin Cruise", text_bn: "সূর্যাস্ত ডলফিন ক্রুজ" },
-        { text: "Spa & Wellness", text_bn: "স্পা ও সুস্থতা" },
-        { text: "Romantic Dinner", text_bn: "রোমান্টিক ডিনার" },
+        { text: 'Overwater Villa Stay', text_bn: 'إقامة في فيلا فوق الماء' },
+        { text: 'Snorkeling Experience', text_bn: 'تجربة سنوركلينج' },
+        { text: 'Romantic Dinner', text_bn: 'عشاء رومانسي' }
       ],
       includes: [
-        { icon: Hotel, text: "5-Star Overwater Villa", text_bn: "৫-তারা ওভারওয়াটার ভিলা" },
-        { icon: Utensils, text: "All-Inclusive Meals", text_bn: "সব খাবার অন্তর্ভুক্ত" },
-        { icon: Plane, text: "Return Flights", text_bn: "ফেরত ফ্লাইট" },
-        { icon: Camera, text: "Island Hopping", text_bn: "আইল্যান্ড হপিং" },
-        { icon: Users, text: "Personal Butler", text_bn: "ব্যক্তিগত বাটলার" },
-        { icon: Shield, text: "Premium Insurance", text_bn: "প্রিমিয়াম বীমা" },
+        { icon: Hotel, text: 'Luxury Resort Stay', text_bn: 'إقامة منتجع فاخر' },
+        { icon: Plane, text: 'Transfer Support', text_bn: 'خدمة انتقالات' },
+        { icon: Shield, text: 'Premium Assistance', text_bn: 'مساعدة متميزة' }
       ],
       itinerary: [
-        { day: 1, title: "Arrival in Paradise", title_bn: "স্বর্গে আগমন", activities: ["Arrive at Male Airport", "Seaplane transfer to resort", "Welcome champagne", "Villa orientation", "Sunset dinner"], activities_bn: ["মালে বিমানবন্দরে পৌঁছানো", "রিসোর্টে সিপ্লেন স্থানান্তর", "স্বাগত শ্যাম্পেন", "ভিলা ওরিয়েন্টেশন", "সূর্যাস্ত ডিনার"] },
-        { day: 2, title: "Water Adventures", title_bn: "জল অ্যাডভেঞ্চার", activities: ["Breakfast in villa", "Snorkeling excursion", "Underwater restaurant lunch", "Spa treatment", "Dolphin sunset cruise"], activities_bn: ["ভিলায় সকালের নাস্তা", "স্নরকেলিং অভিযান", "আন্ডারওয়াটার রেস্তোরাঁয় দুপুরের খাবার", "স্পা চিকিৎসা", "ডলফিন সূর্যাস্ত ক্রুজ"] },
-        { day: 3, title: "Island Discovery", title_bn: "দ্বীপ আবিষ্কার", activities: ["Island hopping tour", "Local village visit", "Beach picnic", "Water sports", "Starlight dinner"], activities_bn: ["আইল্যান্ড হপিং ট্যুর", "স্থানীয় গ্রাম পরিদর্শন", "বিচ পিকনিক", "ওয়াটার স্পোর্টস", "তারার আলোয় ডিনার"] },
-        { day: 4, title: "Relaxation Day", title_bn: "বিশ্রামের দিন", activities: ["Leisurely breakfast", "Couples spa session", "Private pool time", "Romantic beach dinner", "Farewell celebration"], activities_bn: ["অবসরে সকালের নাস্তা", "দম্পতি স্পা সেশন", "প্রাইভেট পুলে সময়", "রোমান্টিক বিচ ডিনার", "বিদায় উদযাপন"] },
-        { day: 5, title: "Departure", title_bn: "প্রস্থান", activities: ["Final breakfast", "Check-out", "Seaplane to Male", "Departure flight"], activities_bn: ["শেষ সকালের নাস্তা", "চেক-আউট", "মালেতে সিপ্লেন", "প্রস্থান ফ্লাইট"] }
+        { day: 1, title: 'Arrival', title_bn: 'الوصول', activities: ['Airport transfer', 'Resort check-in'], activities_bn: ['استقبال من المطار', 'تسجيل الدخول للمنتجع'] },
+        { day: 2, title: 'Island Leisure', title_bn: 'استرخاء على الجزيرة', activities: ['Breakfast', 'Beach time', 'Sunset cruise'], activities_bn: ['إفطار', 'وقت على الشاطئ', 'رحلة غروب بحرية'] },
+        { day: 3, title: 'Ocean Activities', title_bn: 'أنشطة بحرية', activities: ['Snorkeling', 'Spa time', 'Free evening'], activities_bn: ['سنوركلينج', 'وقت سبا', 'أمسية حرة'] },
+        { day: 4, title: 'Resort Experience', title_bn: 'تجربة المنتجع', activities: ['Water villa stay', 'Fine dining', 'Leisure'], activities_bn: ['إقامة في فيلا مائية', 'عشاء فاخر', 'استرخاء'] },
+        { day: 5, title: 'Departure', title_bn: 'المغادرة', activities: ['Check-out', 'Airport transfer'], activities_bn: ['تسجيل الخروج', 'الانتقال إلى المطار'] }
       ],
-      cityHistory: "The Maldives is a tropical paradise consisting of 26 atolls and over 1,000 coral islands. With a history spanning over 2,500 years, it has been influenced by various cultures including Buddhist and Islamic traditions. Today, it's one of the world's most sought-after luxury destinations, famous for its pristine beaches, vibrant marine life, and exclusive resorts.",
-      cityHistory_bn: "মালদ্বীপ ২৬টি অ্যাটল এবং ১,০০০ টিরও বেশি প্রবাল দ্বীপ নিয়ে গঠিত একটি গ্রীষ্মমণ্ডলীয় স্বর্গ। ২,৫০০ বছরেরও বেশি সময় ধরে ইতিহাস রয়েছে।"
+      cityHistory: 'The Maldives is one of the world\'s leading tropical escapes, celebrated for pristine lagoons, marine life, and private island resorts.',
+      cityHistory_bn: 'تعد المالديف من أبرز وجهات الجزر الفاخرة في العالم بفضل بحيراتها الصافية ومنتجعاتها الخاصة وتجاربها البحرية المميزة.'
+    },
+    3: {
+      id: '3',
+      title: 'Cairo Heritage Escape',
+      title_bn: 'رحلة تراثية إلى القاهرة',
+      destination: 'Cairo, Egypt',
+      destination_bn: 'القاهرة، مصر',
+      price: 72000,
+      originalPrice: 86000,
+      duration: '5 Days / 4 Nights',
+      duration_bn: '5 أيام / 4 ليال',
+      rating: 5,
+      reviews: 342,
+      maxPeople: 14,
+      featured: true,
+      popular: true,
+      images: [
+        'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800',
+        'https://images.unsplash.com/photo-1539768942893-daf53e448371?w=800'
+      ],
+      description: 'Discover Cairo through its ancient wonders, vibrant culture, and guided historical experiences.',
+      description_bn: 'اكتشف القاهرة من خلال معالمها التاريخية العريقة وثقافتها النابضة بالحياة وجولاتها الإرشادية المميزة.',
+      highlights: [
+        { text: 'Pyramids of Giza', text_bn: 'أهرامات الجيزة' },
+        { text: 'Nile Dinner Cruise', text_bn: 'رحلة عشاء في النيل' },
+        { text: 'Egyptian Museum', text_bn: 'المتحف المصري' }
+      ],
+      includes: [
+        { icon: Hotel, text: 'Hotel Accommodation', text_bn: 'إقامة فندقية' },
+        { icon: Camera, text: 'Guided Tours', text_bn: 'جولات مع مرشد' },
+        { icon: Utensils, text: 'Breakfast Included', text_bn: 'إفطار يومي' }
+      ],
+      itinerary: [
+        { day: 1, title: 'Arrival in Cairo', title_bn: 'الوصول إلى القاهرة', activities: ['Airport transfer', 'Hotel check-in'], activities_bn: ['استقبال من المطار', 'تسجيل الدخول للفندق'] },
+        { day: 2, title: 'Giza Experience', title_bn: 'تجربة الجيزة', activities: ['Visit the pyramids', 'Sphinx stop', 'Local lunch'], activities_bn: ['زيارة الأهرامات', 'التوقف عند أبو الهول', 'غداء محلي'] },
+        { day: 3, title: 'Historic Cairo', title_bn: 'القاهرة التاريخية', activities: ['Egyptian Museum', 'Khan El Khalili', 'Nile cruise'], activities_bn: ['المتحف المصري', 'خان الخليلي', 'رحلة نيلية'] },
+        { day: 4, title: 'Leisure Day', title_bn: 'يوم حر', activities: ['Free time', 'Optional city tour'], activities_bn: ['وقت حر', 'جولة اختيارية في المدينة'] },
+        { day: 5, title: 'Departure', title_bn: 'المغادرة', activities: ['Check-out', 'Airport transfer'], activities_bn: ['تسجيل الخروج', 'الانتقال إلى المطار'] }
+      ],
+      cityHistory: 'Cairo is one of the oldest great cities in the world, blending Pharaonic heritage, Islamic architecture, and modern urban life.',
+      cityHistory_bn: 'القاهرة من أعرق مدن العالم، وتجمع بين الحضارة الفرعونية والعمارة الإسلامية والحياة الحضرية الحديثة.'
+    },
+    4: {
+      id: '4',
+      title: 'Thailand Tropical Getaway',
+      title_bn: 'عطلة استوائية في تايلاند',
+      destination: 'Thailand',
+      destination_bn: 'تايلاند',
+      price: 65000,
+      originalPrice: 76000,
+      duration: '5 Days / 4 Nights',
+      duration_bn: '5 أيام / 4 ليال',
+      rating: 4.7,
+      reviews: 221,
+      maxPeople: 16,
+      featured: false,
+      popular: true,
+      images: [
+        'https://images.unsplash.com/photo-1528181304800-259b08848526?w=800',
+        'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800'
+      ],
+      description: 'Enjoy beaches, markets, and island energy with a balanced Thailand holiday itinerary.',
+      description_bn: 'استمتع بالشواطئ والأسواق والأجواء الحيوية في تايلاند عبر برنامج عطلة متوازن وممتع.',
+      highlights: [
+        { text: 'Island Excursions', text_bn: 'رحلات الجزر' },
+        { text: 'Local Markets', text_bn: 'الأسواق المحلية' },
+        { text: 'Beach Relaxation', text_bn: 'استرخاء على الشاطئ' }
+      ],
+      includes: [
+        { icon: Hotel, text: 'Hotel Stay', text_bn: 'إقامة فندقية' },
+        { icon: Plane, text: 'Airport Transfers', text_bn: 'انتقالات المطار' },
+        { icon: Camera, text: 'Sightseeing Support', text_bn: 'دعم الجولات السياحية' }
+      ],
+      itinerary: [
+        { day: 1, title: 'Arrival', title_bn: 'الوصول', activities: ['Hotel check-in', 'Evening rest'], activities_bn: ['تسجيل الدخول للفندق', 'راحة مسائية'] },
+        { day: 2, title: 'City & Beach', title_bn: 'المدينة والشاطئ', activities: ['Breakfast', 'Beach visit', 'Evening market'], activities_bn: ['إفطار', 'زيارة الشاطئ', 'سوق مسائي'] },
+        { day: 3, title: 'Island Tour', title_bn: 'جولة الجزر', activities: ['Boat trip', 'Swimming', 'Free time'], activities_bn: ['رحلة بحرية', 'سباحة', 'وقت حر'] },
+        { day: 4, title: 'Leisure', title_bn: 'يوم حر', activities: ['Optional activities', 'Shopping'], activities_bn: ['أنشطة اختيارية', 'تسوق'] },
+        { day: 5, title: 'Departure', title_bn: 'المغادرة', activities: ['Check-out', 'Airport transfer'], activities_bn: ['تسجيل الخروج', 'الانتقال إلى المطار'] }
+      ],
+      cityHistory: 'Thailand is beloved for its beaches, cuisine, hospitality, and rich blend of culture and leisure travel.',
+      cityHistory_bn: 'تشتهر تايلاند بشواطئها ومطبخها وضيافتها ومزيجها الجذاب بين الثقافة والاستجمام.'
+    },
+    5: {
+      id: '5',
+      title: 'Singapore Family Fun',
+      title_bn: 'مغامرة عائلية في سنغافورة',
+      destination: 'Singapore',
+      destination_bn: 'سنغافورة',
+      price: 95000,
+      originalPrice: 108000,
+      duration: '4 Days / 3 Nights',
+      duration_bn: '4 أيام / 3 ليال',
+      rating: 4.8,
+      reviews: 198,
+      maxPeople: 10,
+      featured: true,
+      popular: false,
+      images: [
+        'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800',
+        'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=800'
+      ],
+      description: 'A family-friendly Singapore escape with iconic attractions, clean city comfort, and seamless planning.',
+      description_bn: 'رحلة عائلية إلى سنغافورة تشمل أبرز المعالم وتجربة مدينة منظمة ومريحة للجميع.',
+      highlights: [
+        { text: 'Marina Bay Area', text_bn: 'منطقة مارينا باي' },
+        { text: 'Family Attractions', text_bn: 'معالم عائلية' },
+        { text: 'City Discovery', text_bn: 'استكشاف المدينة' }
+      ],
+      includes: [
+        { icon: Hotel, text: 'Hotel Accommodation', text_bn: 'إقامة فندقية' },
+        { icon: Plane, text: 'Transfer Assistance', text_bn: 'مساعدة في الانتقالات' },
+        { icon: Camera, text: 'Attraction Planning', text_bn: 'تنسيق زيارة المعالم' }
+      ],
+      itinerary: [
+        { day: 1, title: 'Arrival', title_bn: 'الوصول', activities: ['Transfer to hotel', 'Evening city walk'], activities_bn: ['الانتقال إلى الفندق', 'جولة مسائية في المدينة'] },
+        { day: 2, title: 'Iconic Singapore', title_bn: 'معالم سنغافورة', activities: ['Breakfast', 'Marina Bay', 'Gardens by the Bay'], activities_bn: ['إفطار', 'مارينا باي', 'حدائق الخليج'] },
+        { day: 3, title: 'Family Leisure', title_bn: 'أنشطة عائلية', activities: ['Attraction visit', 'Shopping time'], activities_bn: ['زيارة معلم سياحي', 'وقت للتسوق'] },
+        { day: 4, title: 'Departure', title_bn: 'المغادرة', activities: ['Check-out', 'Airport transfer'], activities_bn: ['تسجيل الخروج', 'الانتقال إلى المطار'] }
+      ],
+      cityHistory: 'Singapore is a modern city-state known for efficiency, family attractions, multicultural food, and world-class urban design.',
+      cityHistory_bn: 'سنغافورة مدينة حديثة معروفة بالتنظيم العالي والمعالم العائلية والتنوع الثقافي والتصميم الحضري المتقدم.'
+    },
+    6: {
+      id: '6',
+      title: 'Istanbul Cultural Journey',
+      title_bn: 'رحلة ثقافية إلى إسطنبول',
+      destination: 'Istanbul, Turkey',
+      destination_bn: 'إسطنبول، تركيا',
+      price: 88000,
+      originalPrice: 99000,
+      duration: '4 Days / 3 Nights',
+      duration_bn: '4 أيام / 3 ليال',
+      rating: 4.9,
+      reviews: 275,
+      maxPeople: 14,
+      featured: false,
+      popular: true,
+      images: [
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800',
+        'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800'
+      ],
+      description: 'Explore Istanbul through its mosques, bazaars, Bosphorus views, and timeless cultural atmosphere.',
+      description_bn: 'اكتشف إسطنبول عبر مساجدها التاريخية وأسواقها الشهيرة وإطلالاتها على البوسفور وأجوائها الثقافية الفريدة.',
+      highlights: [
+        { text: 'Historic Mosques', text_bn: 'المساجد التاريخية' },
+        { text: 'Grand Bazaar', text_bn: 'البازار الكبير' },
+        { text: 'Bosphorus Moments', text_bn: 'إطلالات البوسفور' }
+      ],
+      includes: [
+        { icon: Hotel, text: 'Central Hotel Stay', text_bn: 'إقامة فندقية وسط المدينة' },
+        { icon: Camera, text: 'Guided City Tour', text_bn: 'جولة مدينة مع مرشد' },
+        { icon: Utensils, text: 'Breakfast Included', text_bn: 'إفطار يومي' }
+      ],
+      itinerary: [
+        { day: 1, title: 'Arrival', title_bn: 'الوصول', activities: ['Airport transfer', 'Check-in', 'Evening walk'], activities_bn: ['استقبال من المطار', 'تسجيل الدخول', 'جولة مسائية'] },
+        { day: 2, title: 'Old Istanbul', title_bn: 'إسطنبول القديمة', activities: ['Blue Mosque', 'Hagia Sophia', 'Local lunch'], activities_bn: ['الجامع الأزرق', 'آيا صوفيا', 'غداء محلي'] },
+        { day: 3, title: 'Markets & Bosphorus', title_bn: 'الأسواق والبوسفور', activities: ['Grand Bazaar', 'Bosphorus cruise'], activities_bn: ['البازار الكبير', 'رحلة في البوسفور'] },
+        { day: 4, title: 'Departure', title_bn: 'المغادرة', activities: ['Free time', 'Airport transfer'], activities_bn: ['وقت حر', 'الانتقال إلى المطار'] }
+      ],
+      cityHistory: 'Istanbul bridges Europe and Asia and remains one of the world\'s most historic and culturally layered cities.',
+      cityHistory_bn: 'تمثل إسطنبول جسرًا بين آسيا وأوروبا، وهي من أكثر مدن العالم ثراءً بالتاريخ والثقافة.'
     }
   };
 
-  const pkg = packageData[id] || packageData[1];
+  const pkg = packageDetails || fallbackPackages[id] || fallbackPackages[1];
 
   const tabs = [
-    { id: 'overview', label: 'Overview', label_bn: 'সংক্ষিপ্ত বিবরণ' },
-    { id: 'itinerary', label: 'Itinerary', label_bn: 'যাত্রাপথ' },
-    { id: 'includes', label: "What's Included", label_bn: 'অন্তর্ভুক্ত' },
-    { id: 'history', label: 'About Destination', label_bn: 'গন্তব্য সম্পর্কে' },
+    { id: 'overview', label: 'Overview', label_bn: 'نظرة عامة' },
+    { id: 'itinerary', label: 'Itinerary', label_bn: 'برنامج الرحلة' },
+    { id: 'includes', label: "What's Included", label_bn: 'يشمل العرض' },
+    { id: 'history', label: 'About Destination', label_bn: 'عن الوجهة' },
   ];
 
   // Handle booking submission
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (!bookingData.travelDate) {
-      alert('Please select a travel date');
+      alert(language === 'bn' ? 'يرجى اختيار تاريخ السفر' : 'Please select a travel date');
       return;
     }
 
     const totalAmount = pkg.price * bookingData.travelers;
-    
-    const newBooking = {
-      id: Date.now(),
-      packageId: id,
-      packageTitle: pkg.title,
-      destination: pkg.destination,
-      customerName: user?.name || 'Guest',
-      customerEmail: user?.email || '',
-      customerPhone: user?.phone || '',
-      travelers: bookingData.travelers,
-      travelDate: bookingData.travelDate,
-      specialRequests: bookingData.specialRequests,
-      pricePerPerson: pkg.price,
-      totalAmount: totalAmount,
-      status: 'pending',
-      paymentStatus: 'unpaid',
-      bookedAt: new Date().toISOString(),
-      package: pkg.title
-    };
 
-    // Get existing bookings from localStorage
-    const existingBookings = JSON.parse(localStorage.getItem('holidayBookings') || '[]');
-    
-    // Add new booking
-    existingBookings.push(newBooking);
-    
-    // Save to localStorage
-    localStorage.setItem('holidayBookings', JSON.stringify(existingBookings));
+    try {
+      await addBooking({
+        type: 'package',
+        packageId: pkg.id || id,
+        title: language === 'bn' ? pkg.title_bn : pkg.title,
+        destination: pkg.destination,
+        date: bookingData.travelDate,
+        travelers: bookingData.travelers,
+        amount: totalAmount,
+        image: pkg.images?.[0] || pkg.image_url,
+        specialRequests: bookingData.specialRequests,
+        details: {
+          packageId: pkg.id || id,
+          packageTitle: pkg.title,
+          destination: pkg.destination,
+          customerName: user?.name || 'Guest',
+          customerEmail: user?.email || '',
+          customerPhone: user?.phone || '',
+          travelers: bookingData.travelers,
+          travelDate: bookingData.travelDate,
+          specialRequests: bookingData.specialRequests,
+          pricePerPerson: pkg.price,
+          totalAmount
+        }
+      });
 
-    // Save to user bookings context
-    addBooking({
-      type: 'package',
-      title: language === 'bn' ? pkg.title_bn : pkg.title,
-      destination: pkg.destination,
-      date: bookingData.travelDate,
-      travelers: bookingData.travelers,
-      amount: totalAmount,
-      image: pkg.images?.[0] || pkg.image_url,
-      details: newBooking
-    });
-
-    // Show success message
-    setBookingSuccess(true);
-    
-    // Close modal after delay
-    setTimeout(() => {
-      setShowBookingModal(false);
-      setBookingSuccess(false);
-      setBookingData({ travelers: 1, travelDate: '', specialRequests: '' });
-    }, 3000);
+      setBookingSuccess(true);
+      setTimeout(() => {
+        setShowBookingModal(false);
+        setBookingSuccess(false);
+        setBookingData({ travelers: 1, travelDate: '', specialRequests: '' });
+      }, 3000);
+    } catch (error) {
+      alert(language === 'bn' ? 'تعذر إرسال الحجز' : 'Failed to submit booking');
+    }
   };
+
+  if (loadingPackage && !packageDetails) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-slate-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+        {language === 'bn' ? 'جارٍ تحميل تفاصيل الباقة...' : 'Loading package details...'}
+      </div>
+    );
+  }
 
   return (
     <>
       <Helmet>
-        <title>{language === 'bn' ? pkg.title_bn : pkg.title} | Explore Holidays</title>
+        <title>{language === 'bn' ? pkg.title_bn : pkg.title} | Sabir Travels</title>
       </Helmet>
 
       <div className={`min-h-screen ${isDark ? 'bg-slate-900' : 'bg-gray-50'}`}>
@@ -442,12 +452,12 @@ const PackageDetailPage = () => {
               <div className="flex gap-2">
                 {pkg.popular && (
                   <span className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
-                    <Star className="w-4 h-4 fill-current" /> Popular
+                    <Star className="w-4 h-4 fill-current" /> {language === 'bn' ? 'شائع' : 'Popular'}
                   </span>
                 )}
                 {pkg.featured && (
                   <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-sm font-semibold shadow-lg">
-                    Featured
+                    {language === 'bn' ? 'مميز' : 'Featured'}
                   </span>
                 )}
               </div>
@@ -488,7 +498,7 @@ const PackageDetailPage = () => {
                       });
                     } else {
                       navigator.clipboard.writeText(window.location.href);
-                      alert('Link copied to clipboard!');
+                      alert(language === 'bn' ? 'تم نسخ الرابط' : 'Link copied to clipboard!');
                     }
                   }}
                   className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 text-white shadow-lg border border-white/20 flex items-center justify-center hover:shadow-xl transition-all"
@@ -517,7 +527,7 @@ const PackageDetailPage = () => {
                   <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 text-amber-400 fill-current" />
                     <span className="font-semibold">{pkg.rating}</span>
-                    <span className="text-white/60">({pkg.reviews} reviews)</span>
+                    <span className="text-white/60">({pkg.reviews} {language === 'bn' ? 'مراجعة' : 'reviews'})</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-5 h-5" />
@@ -525,7 +535,7 @@ const PackageDetailPage = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <Users className="w-5 h-5" />
-                    <span>Max {pkg.maxPeople} people</span>
+                    <span>{language === 'bn' ? `حتى ${pkg.maxPeople} أشخاص` : `Max ${pkg.maxPeople} people`}</span>
                   </div>
                 </div>
               </motion.div>
@@ -588,14 +598,14 @@ const PackageDetailPage = () => {
                 {activeTab === 'overview' && (
                   <div>
                     <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {language === 'bn' ? 'প্যাকেজ বিবরণ' : 'Package Description'}
+                      {language === 'bn' ? 'وصف الباقة' : 'Package Description'}
                     </h2>
                     <p className={`text-lg leading-relaxed mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                       {language === 'bn' ? pkg.description_bn : pkg.description}
                     </p>
                     
                     <h3 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {language === 'bn' ? 'হাইলাইটস' : 'Highlights'}
+                      {language === 'bn' ? 'أبرز المزايا' : 'Highlights'}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {pkg.highlights.map((item, idx) => (
@@ -623,7 +633,7 @@ const PackageDetailPage = () => {
                 {activeTab === 'itinerary' && (
                   <div className="space-y-6">
                     <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {language === 'bn' ? 'যাত্রাপথ' : 'Day by Day Itinerary'}
+                      {language === 'bn' ? 'البرنامج اليومي' : 'Day by Day Itinerary'}
                     </h2>
                     {pkg.itinerary.map((day, idx) => (
                       <motion.div
@@ -659,7 +669,7 @@ const PackageDetailPage = () => {
                 {activeTab === 'includes' && (
                   <div>
                     <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {language === 'bn' ? 'কি অন্তর্ভুক্ত' : "What's Included"}
+                      {language === 'bn' ? 'ما يشمله العرض' : "What's Included"}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {pkg.includes.map((item, idx) => {
@@ -690,7 +700,7 @@ const PackageDetailPage = () => {
                 {activeTab === 'history' && (
                   <div>
                     <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {language === 'bn' ? 'গন্তব্য সম্পর্কে' : 'About the Destination'}
+                      {language === 'bn' ? 'عن الوجهة' : 'About the Destination'}
                     </h2>
                     <div className={`p-6 rounded-2xl ${isDark ? 'bg-slate-700/50' : 'bg-gradient-to-br from-primary-50 to-secondary-50'}`}>
                       <p className={`text-lg leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -720,7 +730,7 @@ const PackageDetailPage = () => {
                     </span>
                   </div>
                   <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {language === 'bn' ? 'প্রতি জন' : 'per person'}
+                    {language === 'bn' ? 'لكل شخص' : 'per person'}
                   </p>
                   <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-sm font-semibold">
                     <Sparkles className="w-4 h-4 mr-1" />
@@ -733,7 +743,7 @@ const PackageDetailPage = () => {
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>
                       <Clock className="w-4 h-4 inline mr-2" />
-                      {language === 'bn' ? 'সময়কাল' : 'Duration'}
+                      {language === 'bn' ? 'المدة' : 'Duration'}
                     </span>
                     <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                       {language === 'bn' ? pkg.duration_bn : pkg.duration}
@@ -742,7 +752,7 @@ const PackageDetailPage = () => {
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>
                       <Users className="w-4 h-4 inline mr-2" />
-                      {language === 'bn' ? 'সর্বোচ্চ' : 'Max People'}
+                      {language === 'bn' ? 'الحد الأقصى' : 'Max People'}
                     </span>
                     <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                       {pkg.maxPeople}
@@ -751,7 +761,7 @@ const PackageDetailPage = () => {
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>
                       <Star className="w-4 h-4 inline mr-2" />
-                      {language === 'bn' ? 'রেটিং' : 'Rating'}
+                      {language === 'bn' ? 'التقييم' : 'Rating'}
                     </span>
                     <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                       {pkg.rating} ({pkg.reviews})
@@ -772,21 +782,21 @@ const PackageDetailPage = () => {
                   whileTap={{ scale: 0.98 }}
                   className="w-full py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
                 >
-                  {language === 'bn' ? 'এখনই বুক করুন' : 'Book Now'}
+                  {language === 'bn' ? 'احجز الآن' : 'Book Now'}
                   <ArrowRight className="w-5 h-5" />
                 </motion.button>
 
                 {/* Contact */}
                 <div className="mt-6 text-center">
                   <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} mb-2`}>
-                    {language === 'bn' ? 'সাহায্য দরকার?' : 'Need help?'}
+                    {language === 'bn' ? 'هل تحتاج إلى مساعدة؟' : 'Need help?'}
                   </p>
                   <a
-                    href="tel:+8801234567890"
+                    href="tel:+966551234567"
                     className="inline-flex items-center gap-2 text-primary-500 font-semibold hover:underline"
                   >
                     <Phone className="w-4 h-4" />
-                    +880 1234-567890
+                    +966 55 123 4567
                   </a>
                 </div>
 
@@ -795,11 +805,11 @@ const PackageDetailPage = () => {
                   <div className="flex items-center justify-center gap-4">
                     <div className="text-center">
                       <Shield className="w-8 h-8 mx-auto text-green-500 mb-1" />
-                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Secure</span>
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{language === 'bn' ? 'آمن' : 'Secure'}</span>
                     </div>
                     <div className="text-center">
                       <Award className="w-8 h-8 mx-auto text-amber-500 mb-1" />
-                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Best Price</span>
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{language === 'bn' ? 'أفضل سعر' : 'Best Price'}</span>
                     </div>
                     <div className="text-center">
                       <Clock className="w-8 h-8 mx-auto text-blue-500 mb-1" />
@@ -845,10 +855,10 @@ const PackageDetailPage = () => {
                       <CheckCircle className="w-10 h-10 text-white" />
                     </motion.div>
                     <h2 className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      Booking Confirmed!
+                      {language === 'bn' ? 'تم تأكيد الحجز!' : 'Booking Confirmed!'}
                     </h2>
                     <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                      Your booking has been submitted. We'll contact you shortly.
+                      {language === 'bn' ? 'تم إرسال حجزك بنجاح. سنتواصل معك قريبًا.' : 'Your booking has been submitted. We\'ll contact you shortly.'}
                     </p>
                   </div>
                 ) : (
@@ -862,8 +872,8 @@ const PackageDetailPage = () => {
                         <X className="w-5 h-5" />
                       </button>
                       <div className="absolute bottom-4 left-6 text-white">
-                        <h3 className="text-xl font-bold">Book This Package</h3>
-                        <p className="text-white/80 text-sm">{pkg.title}</p>
+                        <h3 className="text-xl font-bold">{language === 'bn' ? 'احجز هذه الباقة' : 'Book This Package'}</h3>
+                        <p className="text-white/80 text-sm">{language === 'bn' ? pkg.title_bn : pkg.title}</p>
                       </div>
                     </div>
 
@@ -872,11 +882,11 @@ const PackageDetailPage = () => {
                       {/* Price Summary */}
                       <div className={`p-4 rounded-xl ${isDark ? 'bg-slate-700' : 'bg-gray-50'}`}>
                         <div className="flex justify-between items-center">
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Price per person</span>
+                          <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>{language === 'bn' ? 'السعر لكل شخص' : 'Price per person'}</span>
                           <span className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{formatCurrency(pkg.price)}</span>
                         </div>
                         <div className="flex justify-between items-center mt-2">
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Total ({bookingData.travelers} travelers)</span>
+                          <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>{language === 'bn' ? `الإجمالي (${bookingData.travelers} مسافرين)` : `Total (${bookingData.travelers} travelers)`}</span>
                           <span className="font-bold text-primary-500 text-xl">{formatCurrency(pkg.price * bookingData.travelers)}</span>
                         </div>
                       </div>
@@ -884,7 +894,7 @@ const PackageDetailPage = () => {
                       {/* Travelers */}
                       <div>
                         <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                          Number of Travelers
+                          {language === 'bn' ? 'عدد المسافرين' : 'Number of Travelers'}
                         </label>
                         <select
                           value={bookingData.travelers}
@@ -894,7 +904,7 @@ const PackageDetailPage = () => {
                           }`}
                         >
                           {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                            <option key={n} value={n}>{n} {n === 1 ? 'Person' : 'People'}</option>
+                            <option key={n} value={n}>{language === 'bn' ? `${n} ${n === 1 ? 'مسافر' : 'مسافرين'}` : `${n} ${n === 1 ? 'Person' : 'People'}`}</option>
                           ))}
                         </select>
                       </div>
@@ -902,7 +912,7 @@ const PackageDetailPage = () => {
                       {/* Travel Date */}
                       <div>
                         <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                          Travel Date
+                          {language === 'bn' ? 'تاريخ السفر' : 'Travel Date'}
                         </label>
                         <input
                           type="date"
@@ -918,13 +928,13 @@ const PackageDetailPage = () => {
                       {/* Special Requests */}
                       <div>
                         <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                          Special Requests (Optional)
+                          {language === 'bn' ? 'طلبات خاصة (اختياري)' : 'Special Requests (Optional)'}
                         </label>
                         <textarea
                           value={bookingData.specialRequests}
                           onChange={(e) => setBookingData({...bookingData, specialRequests: e.target.value})}
                           rows={3}
-                          placeholder="Any special requirements..."
+                          placeholder={language === 'bn' ? 'أي متطلبات خاصة...' : 'Any special requirements...'}
                           className={`w-full px-4 py-3 rounded-xl border resize-none ${
                             isDark ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'
                           }`}
@@ -938,7 +948,7 @@ const PackageDetailPage = () => {
                         whileTap={{ scale: 0.98 }}
                         className="w-full py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-bold rounded-xl shadow-lg"
                       >
-                        Confirm Booking
+                        {language === 'bn' ? 'تأكيد الحجز' : 'Confirm Booking'}
                       </motion.button>
                     </div>
                   </>

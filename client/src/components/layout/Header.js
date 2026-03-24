@@ -29,12 +29,26 @@ const Header = () => {
   const { isDark, toggleTheme } = useTheme();
   const { language, toggleLanguage } = useLanguage();
   const { user, logout, isAuthenticated } = useAuth();
-  const { useGradients, getButtonClass } = useGradient();
+  const { useGradients } = useGradient();
   const location = useLocation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const siteSettings = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('siteSettings') || '{}');
+    } catch (error) {
+      return {};
+    }
+  })();
+  const siteName = !siteSettings.siteName || ['Ahmed Essa Travel', 'Explore Holidays'].includes(siteSettings.siteName)
+    ? 'Sabir Travels'
+    : siteSettings.siteName;
+  const tagline = !siteSettings.tagline || siteSettings.tagline === 'Your Premium Travel Partner'
+    ? 'Your trusted travel partner in Saudi Arabia'
+    : siteSettings.tagline;
+  const taglineAr = siteSettings.taglineAr || 'شريكك الموثوق للسفر في المملكة العربية السعودية';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,14 +100,14 @@ const Header = () => {
               <h1 className={`text-xl font-bold ${
                 isScrolled || isDark ? 'text-primary-500' : 'text-white'
               } group-hover:text-primary-400 transition-colors`}>
-                Explore Holidays
+                {siteName}
               </h1>
               <p className={`text-xs ${
                 isScrolled 
                   ? isDark ? 'text-slate-400' : 'text-gray-500'
                   : 'text-white/70'
               }`}>
-                {language === 'bn' ? 'আপনার ভ্রমণ সঙ্গী' : 'Your Travel Partner'}
+                {language === 'bn' ? taglineAr : tagline}
               </p>
             </div>
           </Link>
@@ -143,7 +157,7 @@ const Header = () => {
               title="Toggle Language"
             >
               <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">{language === 'en' ? 'বাং' : 'EN'}</span>
+              <span className="text-sm font-medium">{language === 'en' ? 'عربي' : 'EN'}</span>
             </motion.button>
 
             {/* Theme Toggle */}
@@ -232,7 +246,7 @@ const Header = () => {
                           } transition-colors`}
                         >
                           <Ticket className="w-4 h-4" />
-                          {language === 'bn' ? 'আমার বুকিং' : 'My Bookings'}
+                          {language === 'bn' ? 'حجوزاتي' : 'My Bookings'}
                         </Link>
                         <Link
                           to="/profile"
@@ -242,7 +256,7 @@ const Header = () => {
                           } transition-colors`}
                         >
                           <User className="w-4 h-4" />
-                          {language === 'bn' ? 'প্রোফাইল' : 'Profile'}
+                          {language === 'bn' ? 'الملف الشخصي' : 'Profile'}
                         </Link>
                         <Link
                           to="/settings"
@@ -252,7 +266,7 @@ const Header = () => {
                           } transition-colors`}
                         >
                           <Settings className="w-4 h-4" />
-                          {language === 'bn' ? 'সেটিংস' : 'Settings'}
+                          {language === 'bn' ? 'الإعدادات' : 'Settings'}
                         </Link>
                       </div>
                       <div className={`border-t ${isDark ? 'border-slate-700' : 'border-gray-100'}`}>
@@ -261,7 +275,7 @@ const Header = () => {
                           className={`flex items-center gap-3 w-full px-4 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors`}
                         >
                           <LogOut className="w-4 h-4" />
-                          {language === 'bn' ? 'লগআউট' : 'Logout'}
+                          {language === 'bn' ? 'تسجيل الخروج' : 'Logout'}
                         </button>
                       </div>
                     </motion.div>
@@ -278,7 +292,7 @@ const Header = () => {
                       : 'text-white hover:bg-white/10'
                   }`}
                 >
-                  {language === 'bn' ? 'লগইন' : 'Login'}
+                  {language === 'bn' ? 'تسجيل الدخول' : 'Login'}
                 </Link>
                 <Link
                   to="/signup"
@@ -288,7 +302,7 @@ const Header = () => {
                       : 'bg-primary-500 hover:bg-primary-600'
                   }`}
                 >
-                  {language === 'bn' ? 'সাইন আপ' : 'Sign Up'}
+                  {language === 'bn' ? 'إنشاء حساب' : 'Sign Up'}
                 </Link>
               </div>
             )}

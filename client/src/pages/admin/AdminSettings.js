@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Settings, Globe, Mail, Phone, MapPin, Image, Save, Check, Upload, 
-  Palette, Type, Facebook, Instagram, Twitter, Youtube, X, Eye, 
+  Settings, Globe, Mail, Phone, MapPin, Image, Save, Check, Upload,
+  Palette, Facebook, Instagram, Twitter, Youtube,
   RefreshCw, Trash2, Plus, Building2, Plane, Sparkles
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { normalizeSaudiCurrencySettings } from '../../utils/currency';
 
 const AdminSettings = () => {
   // Theme state
@@ -23,6 +25,23 @@ const AdminSettings = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const fetchAdminSettings = async () => {
+      try {
+        const response = await axios.get('/api/admin/settings');
+        const { partners: apiPartners, ...apiSettings } = response.data.data;
+        const normalizedSettings = normalizeSaudiCurrencySettings(apiSettings);
+        setSettings(normalizedSettings);
+        setPartners(apiPartners);
+        localStorage.setItem('siteSettings', JSON.stringify(normalizedSettings));
+        localStorage.setItem('sitePartners', JSON.stringify(apiPartners));
+      } catch (error) {
+      }
+    };
+
+    fetchAdminSettings();
+  }, []);
+
   const [activeTab, setActiveTab] = useState('general');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -31,28 +50,59 @@ const AdminSettings = () => {
 
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('siteSettings');
-    return saved ? JSON.parse(saved) : {
-      siteName: 'Explore Holidays',
-      siteTitle: 'Explore Holidays | Premium Travel Booking',
-      tagline: 'Your Premium Travel Partner',
+    return saved ? normalizeSaudiCurrencySettings(JSON.parse(saved)) : {
+      siteName: 'Ahmed Essa Travel',
+      siteTitle: 'Ahmed Essa Travel | Premium Travel Services in Saudi Arabia',
+      tagline: 'Your Trusted Travel Partner in Saudi Arabia',
+      siteNameAr: 'أحمد عيسى للسفر',
+      taglineAr: 'شريكك الموثوق للسفر في المملكة العربية السعودية',
       logo: null,
       favicon: null,
-      phone: '+880 1234-567890',
-      email: 'info@exploreholidays.com',
-      supportEmail: 'support@exploreholidays.com',
-      address: 'House 42, Road 11, Banani, Dhaka 1213',
-      facebook: 'https://facebook.com/exploreholidays',
-      twitter: 'https://twitter.com/exploreholidays',
-      instagram: 'https://instagram.com/exploreholidays',
-      youtube: 'https://youtube.com/exploreholidays',
-      footerText: 'Experience the world with Bangladesh\'s most trusted travel agency.',
-      copyrightText: '© 2024 Explore Holidays. All rights reserved.',
+      phone: '+966 55 123 4567',
+      email: 'info@ahmedessatravel.sa',
+      supportEmail: 'support@ahmedessatravel.sa',
+      address: 'Olaya Street, Riyadh 12214, Saudi Arabia',
+      addressAr: 'شارع العليا، الرياض 12214، المملكة العربية السعودية',
+      facebook: 'https://facebook.com/ahmedessatravel',
+      twitter: 'https://twitter.com/ahmedessatravel',
+      instagram: 'https://instagram.com/ahmedessatravel',
+      youtube: 'https://youtube.com/@ahmedessatravel',
+      footerText: 'Premium travel services tailored for Saudi Arabia and Gulf travelers.',
+      footerTextAr: 'خدمات سفر متميزة مصممة للمسافرين في المملكة العربية السعودية ودول الخليج.',
+      copyrightText: '(C) 2024 Ahmed Essa Travel. All rights reserved.',
       primaryColor: '#6366f1',
       secondaryColor: '#8b5cf6',
       accentColor: '#06b6d4',
       headerBg: '#1e293b',
       footerBg: '#0f172a',
       useGradients: true,
+      countryCode: 'SA',
+      countryName: 'Saudi Arabia',
+      countryNameAr: 'المملكة العربية السعودية',
+      defaultLanguage: 'en',
+      secondaryLanguage: 'ar',
+      currencyCode: 'SAR',
+      currencySymbol: '⃁',
+      locale: 'en-SA',
+      companyName: 'Ahmed Essa Travel',
+      companyNameAr: 'أحمد عيسى للسفر',
+      companyAddress: 'Olaya Street, Riyadh 12214, Saudi Arabia',
+      companyAddressAr: 'شارع العليا، الرياض 12214، المملكة العربية السعودية',
+      vatNumber: '300000000000003',
+      crNumber: '1010000000',
+      taxRate: 15,
+      invoicePrefix: 'INV',
+      invoiceTerms: 'Thank you for choosing Ahmed Essa Travel.',
+      invoiceTermsAr: 'شكراً لاختياركم أحمد عيسى للسفر.',
+      zatcaEnabled: true,
+      zatcaPhase: 'phase1',
+      zatcaQrEnabled: true,
+      zatcaPhase2Enabled: false,
+      zatcaEnvironment: 'sandbox',
+      zatcaDeviceId: '',
+      zatcaApiBaseUrl: '',
+      zatcaOtp: '',
+      zatcaSecret: '',
     };
   });
 
@@ -60,48 +110,63 @@ const AdminSettings = () => {
     const saved = localStorage.getItem('sitePartners');
     return saved ? JSON.parse(saved) : {
       banks: [
-        { id: 1, name: 'BRAC Bank', logo: 'https://upload.wikimedia.org/wikipedia/en/5/5f/BRAC_Bank_logo.svg', active: true },
-        { id: 2, name: 'Dutch Bangla Bank', logo: 'https://upload.wikimedia.org/wikipedia/en/d/df/Dutch-Bangla_Bank_logo.svg', active: true },
-        { id: 3, name: 'City Bank', logo: 'https://upload.wikimedia.org/wikipedia/en/9/96/City_Bank_Bangladesh.svg', active: true },
-        { id: 4, name: 'Eastern Bank', logo: 'https://upload.wikimedia.org/wikipedia/en/a/a4/Eastern_Bank_Limited.svg', active: true },
-        { id: 5, name: 'bKash', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/29/BKash_Logo.svg', active: true },
-        { id: 6, name: 'Nagad', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Nagad_Logo.svg', active: true },
+        { id: 1, name: 'Al Rajhi Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Al_Rajhi_Bank_Logo.svg', active: true },
+        { id: 2, name: 'Saudi National Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/68/SNB_Logo.svg', active: true },
+        { id: 3, name: 'Riyad Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Riyad_Bank_logo.svg', active: true },
+        { id: 4, name: 'SAB', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/SABB_logo.svg', active: true },
+        { id: 5, name: 'Alinma Bank', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/39/Alinma_Bank.svg', active: true },
+        { id: 6, name: 'Bank AlJazira', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Bank_AlJazira_Logo.svg', active: true },
       ],
       airlines: [
-        { id: 1, name: 'Biman Bangladesh', logo: 'https://upload.wikimedia.org/wikipedia/en/a/a1/Biman_Bangladesh_Airlines_Logo.svg', active: true },
+        { id: 1, name: 'Saudia', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Saudia_Logo.svg', active: true },
         { id: 2, name: 'Emirates', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Emirates_logo.svg', active: true },
-        { id: 3, name: 'Singapore Airlines', logo: 'https://upload.wikimedia.org/wikipedia/en/6/6b/Singapore_Airlines_Logo_2.svg', active: true },
-        { id: 4, name: 'Qatar Airways', logo: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Qatar_Airways_logo.svg', active: true },
-        { id: 5, name: 'Thai Airways', logo: 'https://upload.wikimedia.org/wikipedia/en/e/ed/Thai_Airways_Logo.svg', active: true },
-        { id: 6, name: 'Malaysia Airlines', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Malaysia_Airlines_Logo.svg', active: true },
+        { id: 3, name: 'Qatar Airways', logo: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Qatar_Airways_logo.svg', active: true },
+        { id: 4, name: 'Etihad Airways', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Etihad_Airways_Logo.svg', active: true },
+        { id: 5, name: 'Flynas', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Flynas_Logo.svg', active: true },
+        { id: 6, name: 'Flydubai', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Flydubai_logo.svg', active: true },
       ]
     };
   });
 
   const tabs = [
     { id: 'general', label: 'General', icon: Globe },
+    { id: 'regional', label: 'Regional & Arabic', icon: MapPin },
     { id: 'branding', label: 'Branding', icon: Image },
     { id: 'contact', label: 'Contact', icon: Phone },
+    { id: 'invoice', label: 'Invoice', icon: Building2 },
+    { id: 'zatca', label: 'ZATCA', icon: Sparkles },
     { id: 'social', label: 'Social & Footer', icon: Settings },
     { id: 'theme', label: 'Theme', icon: Palette },
     { id: 'partners', label: 'Partners', icon: Building2 },
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true);
-    localStorage.setItem('siteSettings', JSON.stringify(settings));
-    localStorage.setItem('sitePartners', JSON.stringify(partners));
-    
-    // Apply theme colors
-    document.documentElement.style.setProperty('--primary-color', settings.primaryColor);
-    document.documentElement.style.setProperty('--secondary-color', settings.secondaryColor);
-    document.documentElement.style.setProperty('--accent-color', settings.accentColor);
-    
-    setTimeout(() => {
-      setSaving(false);
+
+    try {
+      const response = await axios.put('/api/admin/settings', {
+        settings,
+        partners
+      });
+
+      const { partners: updatedPartners, ...updatedSettings } = response.data.data;
+
+      setSettings(updatedSettings);
+      setPartners(updatedPartners);
+      localStorage.setItem('siteSettings', JSON.stringify(updatedSettings));
+      localStorage.setItem('sitePartners', JSON.stringify(updatedPartners));
+
+      document.documentElement.style.setProperty('--primary-color', updatedSettings.primaryColor);
+      document.documentElement.style.setProperty('--secondary-color', updatedSettings.secondaryColor);
+      document.documentElement.style.setProperty('--accent-color', updatedSettings.accentColor);
+
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    }, 1000);
+    } catch (error) {
+      alert('Failed to save settings');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleImageUpload = (e, type) => {
@@ -240,6 +305,116 @@ const AdminSettings = () => {
                       onChange={(e) => setSettings(prev => ({ ...prev, siteTitle: e.target.value }))}
                       className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
                     />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'regional' && (
+              <div className="space-y-6">
+                <div className={`rounded-2xl p-6 border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200 shadow-sm'}`}>
+                  <h2 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <MapPin className="w-5 h-5 text-primary-500" />
+                    Saudi Localization
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Arabic Site Name</label>
+                      <input
+                        type="text"
+                        dir="rtl"
+                        value={settings.siteNameAr || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, siteNameAr: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border text-right ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Arabic Tagline</label>
+                      <input
+                        type="text"
+                        dir="rtl"
+                        value={settings.taglineAr || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, taglineAr: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border text-right ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Country Name</label>
+                      <input
+                        type="text"
+                        value={settings.countryName || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, countryName: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Country Name (Arabic)</label>
+                      <input
+                        type="text"
+                        dir="rtl"
+                        value={settings.countryNameAr || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, countryNameAr: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border text-right ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Country Code</label>
+                      <input
+                        type="text"
+                        value={settings.countryCode || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, countryCode: e.target.value.toUpperCase() }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Locale</label>
+                      <input
+                        type="text"
+                        value={settings.locale || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, locale: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Default Language</label>
+                      <select
+                        value={settings.defaultLanguage || 'en'}
+                        onChange={(e) => setSettings(prev => ({ ...prev, defaultLanguage: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      >
+                        <option value="en">English</option>
+                        <option value="ar">Arabic</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Secondary Language</label>
+                      <select
+                        value={settings.secondaryLanguage || 'ar'}
+                        onChange={(e) => setSettings(prev => ({ ...prev, secondaryLanguage: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      >
+                        <option value="ar">Arabic</option>
+                        <option value="en">English</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Currency Code</label>
+                      <input
+                        type="text"
+                        value={settings.currencyCode || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, currencyCode: e.target.value.toUpperCase() }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Currency Symbol</label>
+                      <input
+                        type="text"
+                        value={settings.currencySymbol || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, currencySymbol: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -389,6 +564,196 @@ const AdminSettings = () => {
                         value={settings.address}
                         onChange={(e) => setSettings(prev => ({ ...prev, address: e.target.value }))}
                         className={`w-full pl-12 pr-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'invoice' && (
+              <div className="space-y-6">
+                <div className={`rounded-2xl p-6 border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200 shadow-sm'}`}>
+                  <h2 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <Building2 className="w-5 h-5 text-primary-500" />
+                    Invoice Configuration
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Company Name</label>
+                      <input
+                        type="text"
+                        value={settings.companyName || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, companyName: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Company Name (Arabic)</label>
+                      <input
+                        type="text"
+                        dir="rtl"
+                        value={settings.companyNameAr || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, companyNameAr: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border text-right ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Company Address</label>
+                      <textarea
+                        value={settings.companyAddress || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, companyAddress: e.target.value }))}
+                        rows={3}
+                        className={`w-full px-4 py-3 rounded-xl border resize-none ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Company Address (Arabic)</label>
+                      <textarea
+                        dir="rtl"
+                        value={settings.companyAddressAr || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, companyAddressAr: e.target.value }))}
+                        rows={3}
+                        className={`w-full px-4 py-3 rounded-xl border resize-none text-right ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Invoice Prefix</label>
+                      <input
+                        type="text"
+                        value={settings.invoicePrefix || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, invoicePrefix: e.target.value.toUpperCase() }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>VAT Rate (%)</label>
+                      <input
+                        type="number"
+                        value={settings.taxRate || 15}
+                        onChange={(e) => setSettings(prev => ({ ...prev, taxRate: Number(e.target.value || 0) }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>VAT Number</label>
+                      <input
+                        type="text"
+                        value={settings.vatNumber || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, vatNumber: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>CR Number</label>
+                      <input
+                        type="text"
+                        value={settings.crNumber || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, crNumber: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Invoice Footer (English)</label>
+                      <textarea
+                        value={settings.invoiceTerms || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, invoiceTerms: e.target.value }))}
+                        rows={3}
+                        className={`w-full px-4 py-3 rounded-xl border resize-none ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Invoice Footer (Arabic)</label>
+                      <textarea
+                        dir="rtl"
+                        value={settings.invoiceTermsAr || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, invoiceTermsAr: e.target.value }))}
+                        rows={3}
+                        className={`w-full px-4 py-3 rounded-xl border resize-none text-right ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'zatca' && (
+              <div className="space-y-6">
+                <div className={`rounded-2xl p-6 border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200 shadow-sm'}`}>
+                  <h2 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <Sparkles className="w-5 h-5 text-primary-500" />
+                    ZATCA Phase 1 / Phase 2
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <label className={`flex items-center justify-between p-4 rounded-xl border ${isDark ? 'border-slate-700 bg-slate-900/60 text-white' : 'border-gray-200 bg-gray-50 text-gray-900'}`}>
+                      <span>ZATCA Enabled</span>
+                      <input type="checkbox" checked={settings.zatcaEnabled || false} onChange={(e) => setSettings(prev => ({ ...prev, zatcaEnabled: e.target.checked }))} className="w-4 h-4" />
+                    </label>
+                    <label className={`flex items-center justify-between p-4 rounded-xl border ${isDark ? 'border-slate-700 bg-slate-900/60 text-white' : 'border-gray-200 bg-gray-50 text-gray-900'}`}>
+                      <span>ZATCA QR on Invoices</span>
+                      <input type="checkbox" checked={settings.zatcaQrEnabled || false} onChange={(e) => setSettings(prev => ({ ...prev, zatcaQrEnabled: e.target.checked }))} className="w-4 h-4" />
+                    </label>
+                    <label className={`flex items-center justify-between p-4 rounded-xl border ${isDark ? 'border-slate-700 bg-slate-900/60 text-white' : 'border-gray-200 bg-gray-50 text-gray-900'}`}>
+                      <span>Phase 2 Integration</span>
+                      <input type="checkbox" checked={settings.zatcaPhase2Enabled || false} onChange={(e) => setSettings(prev => ({ ...prev, zatcaPhase2Enabled: e.target.checked }))} className="w-4 h-4" />
+                    </label>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Active Phase</label>
+                      <select
+                        value={settings.zatcaPhase || 'phase1'}
+                        onChange={(e) => setSettings(prev => ({ ...prev, zatcaPhase: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      >
+                        <option value="phase1">Phase 1</option>
+                        <option value="phase2">Phase 2</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Environment</label>
+                      <select
+                        value={settings.zatcaEnvironment || 'sandbox'}
+                        onChange={(e) => setSettings(prev => ({ ...prev, zatcaEnvironment: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      >
+                        <option value="sandbox">Sandbox</option>
+                        <option value="simulation">Simulation</option>
+                        <option value="production">Production</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Device ID / UUID</label>
+                      <input
+                        type="text"
+                        value={settings.zatcaDeviceId || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, zatcaDeviceId: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>API Base URL</label>
+                      <input
+                        type="url"
+                        value={settings.zatcaApiBaseUrl || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, zatcaApiBaseUrl: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>OTP</label>
+                      <input
+                        type="text"
+                        value={settings.zatcaOtp || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, zatcaOtp: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Secret / Token</label>
+                      <input
+                        type="password"
+                        value={settings.zatcaSecret || ''}
+                        onChange={(e) => setSettings(prev => ({ ...prev, zatcaSecret: e.target.value }))}
+                        className={`w-full px-4 py-3 rounded-xl border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
                       />
                     </div>
                   </div>

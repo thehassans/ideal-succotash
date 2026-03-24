@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FileCheck, Plus, Edit, Trash2, Save, X, Globe, DollarSign, 
-  Clock, Users, Search, Check, AlertCircle
+  Plus, Edit, Trash2, Save, X,
+  Clock, Search, Check, AlertCircle
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useLanguage } from '../../context/LanguageContext';
+import { SAUDI_RIYAL_SYMBOL } from '../../utils/currency';
 
 const AdminVisas = () => {
   // Theme state
@@ -118,6 +120,7 @@ const AdminVisas = () => {
   const [editingVisa, setEditingVisa] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { formatCurrency } = useLanguage();
 
   const emptyVisa = {
     id: null,
@@ -243,7 +246,7 @@ const AdminVisas = () => {
               </div>
 
               <div className="flex items-center justify-between mb-4">
-                <span className="text-2xl font-bold text-primary-400">৳{visa.price.toLocaleString()}</span>
+                <span className="text-2xl font-bold text-primary-400">{formatCurrency(visa.price)}</span>
               </div>
 
               <div className="flex gap-2">
@@ -347,7 +350,7 @@ const AdminVisas = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Price (৳)</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Price ({SAUDI_RIYAL_SYMBOL})</label>
                       <input
                         type="number"
                         value={editingVisa.price}

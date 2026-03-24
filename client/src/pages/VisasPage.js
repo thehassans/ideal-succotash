@@ -11,14 +11,12 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
-import { useGradient } from '../context/GradientContext';
 
 const VisasPage = () => {
   useTranslation();
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { language, formatCurrency } = useLanguage();
-  const { useGradients, getButtonClass } = useGradient();
   const [selectedCountry, setSelectedCountry] = useState(null);
 
   const visaData = [
@@ -28,7 +26,7 @@ const VisasPage = () => {
       processing: '3-5 days', 
       price: 8000, 
       requirements: ['Valid Passport', 'Passport Photo', 'Bank Statement', 'Hotel Booking'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'পাসপোর্ট ফটো', 'ব্যাংক স্টেটমেন্ট', 'হোটেল বুকিং']
+      requirements_bn: ['جواز سفر ساري', 'صورة جواز', 'كشف حساب بنكي', 'حجز فندقي']
     },
     { 
       country: 'Singapore', 
@@ -36,7 +34,7 @@ const VisasPage = () => {
       processing: '5-7 days', 
       price: 5000, 
       requirements: ['Valid Passport', 'Photo', 'Hotel Booking', 'Return Ticket'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'হোটেল বুকিং', 'রিটার্ন টিকেট']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'حجز فندقي', 'تذكرة عودة']
     },
     { 
       country: 'Thailand', 
@@ -44,7 +42,7 @@ const VisasPage = () => {
       processing: 'On Arrival', 
       price: 3500, 
       requirements: ['Valid Passport', 'Photo', 'Return Ticket', 'Hotel Booking'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'রিটার্ন টিকেট', 'হোটেল বুকিং']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'تذكرة عودة', 'حجز فندقي']
     },
     { 
       country: 'Malaysia', 
@@ -52,7 +50,7 @@ const VisasPage = () => {
       processing: '3-5 days', 
       price: 4500, 
       requirements: ['Valid Passport', 'Photo', 'Bank Statement', 'Employment Letter'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'ব্যাংক স্টেটমেন্ট', 'কর্মসংস্থান পত্র']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'كشف حساب بنكي', 'خطاب تعريف من جهة العمل']
     },
     { 
       country: 'India', 
@@ -60,7 +58,7 @@ const VisasPage = () => {
       processing: '2-3 days', 
       price: 2500, 
       requirements: ['Valid Passport', 'Photo', 'Application Form'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'আবেদন ফর্ম']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'نموذج الطلب']
     },
     { 
       country: 'UK', 
@@ -68,7 +66,7 @@ const VisasPage = () => {
       processing: '15-20 days', 
       price: 15000, 
       requirements: ['Valid Passport', 'Photo', 'Financial Documents', 'Travel Insurance', 'Itinerary'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'আর্থিক নথি', 'ভ্রমণ বীমা', 'ভ্রমণসূচী']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'مستندات مالية', 'تأمين سفر', 'خطة الرحلة']
     },
     { 
       country: 'USA', 
@@ -76,7 +74,7 @@ const VisasPage = () => {
       processing: 'Interview Based', 
       price: 18000, 
       requirements: ['Valid Passport', 'Photo', 'DS-160 Form', 'Interview', 'Financial Documents'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'ডিএস-১৬০ ফর্ম', 'সাক্ষাৎকার', 'আর্থিক নথি']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'نموذج DS-160', 'مقابلة', 'مستندات مالية']
     },
     { 
       country: 'Schengen', 
@@ -84,15 +82,15 @@ const VisasPage = () => {
       processing: '10-15 days', 
       price: 12000, 
       requirements: ['Valid Passport', 'Photo', 'Travel Insurance', 'Itinerary', 'Hotel Booking'],
-      requirements_bn: ['বৈধ পাসপোর্ট', 'ফটো', 'ভ্রমণ বীমা', 'ভ্রমণসূচী', 'হোটেল বুকিং']
+      requirements_bn: ['جواز سفر ساري', 'صورة شخصية', 'تأمين سفر', 'خطة الرحلة', 'حجز فندقي']
     }
   ];
 
   return (
     <>
       <Helmet>
-        <title>Visa Services | Explore Holidays</title>
-        <meta name="description" content="Professional visa processing services for all countries from Bangladesh. Fast, reliable, and hassle-free." />
+        <title>Visa Services | Sabir Travels</title>
+        <meta name="description" content="Professional visa processing services for global destinations from Saudi Arabia through Sabir Travels." />
       </Helmet>
 
       {/* Hero */}
@@ -105,11 +103,11 @@ const VisasPage = () => {
           >
             <FileCheck className="w-16 h-16 mx-auto mb-6 opacity-80" />
             <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-              {language === 'bn' ? 'ভিসা সেবা' : 'Visa Services'}
+              {language === 'bn' ? 'خدمات التأشيرات' : 'Visa Services'}
             </h1>
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
               {language === 'bn' 
-                ? 'সব দেশের জন্য ঝামেলামুক্ত ভিসা প্রসেসিং। আমাদের বিশেষজ্ঞ দল আপনার জন্য কাজ করবে।'
+                ? 'إجراءات تأشيرات ميسرة لمختلف الوجهات مع متابعة دقيقة من فريق Sabir Travels.'
                 : 'Hassle-free visa processing for all countries. Our expert team handles everything for you.'}
             </p>
           </motion.div>
@@ -147,7 +145,7 @@ const VisasPage = () => {
 
                 <div className="mb-4">
                   <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {language === 'bn' ? 'প্রসেসিং ফি' : 'Processing Fee'}
+                    {language === 'bn' ? 'رسوم المعالجة' : 'Processing Fee'}
                   </span>
                   <p className="text-2xl font-bold text-primary-500">
                     {formatCurrency(visa.price)}
@@ -162,7 +160,7 @@ const VisasPage = () => {
                     className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-600"
                   >
                     <p className={`font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      {language === 'bn' ? 'প্রয়োজনীয় ডকুমেন্ট:' : 'Required Documents:'}
+                      {language === 'bn' ? 'المستندات المطلوبة:' : 'Required Documents:'}
                     </p>
                     <ul className="space-y-2">
                       {(language === 'bn' ? visa.requirements_bn : visa.requirements).map((req, i) => (
@@ -182,7 +180,7 @@ const VisasPage = () => {
                   }}
                   className="w-full mt-4 py-3 bg-primary-500/10 text-primary-500 font-medium rounded-xl hover:bg-primary-500 hover:text-white transition-all flex items-center justify-center"
                 >
-                  {language === 'bn' ? 'আবেদন করুন' : 'Apply Now'}
+                  {language === 'bn' ? 'قدّم الآن' : 'Apply Now'}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </button>
               </motion.div>
@@ -195,14 +193,14 @@ const VisasPage = () => {
       <section className={`py-16 ${isDark ? 'bg-slate-800' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'bn' ? 'ভিসা প্রসেস' : 'Visa Process'}
+            {language === 'bn' ? 'خطوات إصدار التأشيرة' : 'Visa Process'}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { step: 1, title: 'Submit Documents', title_bn: 'ডকুমেন্ট জমা দিন', icon: '📄' },
-              { step: 2, title: 'Verification', title_bn: 'যাচাইকরণ', icon: '✅' },
-              { step: 3, title: 'Processing', title_bn: 'প্রসেসিং', icon: '⏳' },
-              { step: 4, title: 'Visa Ready', title_bn: 'ভিসা প্রস্তুত', icon: '🎉' }
+              { step: 1, title: 'Submit Documents', title_bn: 'تسليم المستندات', icon: '📄' },
+              { step: 2, title: 'Verification', title_bn: 'المراجعة والتحقق', icon: '✅' },
+              { step: 3, title: 'Processing', title_bn: 'المعالجة', icon: '⏳' },
+              { step: 4, title: 'Visa Ready', title_bn: 'التأشيرة جاهزة', icon: '🎉' }
             ].map((item, index) => (
               <motion.div
                 key={item.step}

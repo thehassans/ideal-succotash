@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { 
   MapPin, 
@@ -15,7 +14,6 @@ import { useGradient } from '../../context/GradientContext';
 import axios from 'axios';
 
 const PopularPackages = () => {
-  const { t } = useTranslation();
   const { isDark } = useTheme();
   const { language, formatCurrency } = useLanguage();
   const { useGradients } = useGradient();
@@ -33,66 +31,78 @@ const PopularPackages = () => {
         setPackages([
           {
             id: 1,
-            title: "Cox's Bazar Beach Paradise",
-            title_bn: "কক্সবাজার সমুদ্র সৈকত প্যারাডাইস",
-            destination: "Cox's Bazar, Bangladesh",
-            price: 25000,
-            duration: "3 Days / 2 Nights",
+            title: 'Dubai City Explorer',
+            title_bn: 'رحلة استكشاف دبي',
+            destination: 'Dubai, UAE',
+            destination_bn: 'دبي، الإمارات',
+            price: 85000,
+            duration: '4 Days / 3 Nights',
+            duration_bn: '4 أيام / 3 ليال',
             image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
             is_popular: true,
             is_featured: true
           },
           {
             id: 2,
-            title: "Maldives Luxury Escape",
-            title_bn: "মালদ্বীপ বিলাসবহুল অবকাশ",
-            destination: "Maldives",
+            title: 'Maldives Luxury Escape',
+            title_bn: 'عطلة فاخرة في المالديف',
+            destination: 'Maldives',
+            destination_bn: 'المالديف',
             price: 150000,
-            duration: "5 Days / 4 Nights",
+            duration: '5 Days / 4 Nights',
+            duration_bn: '5 أيام / 4 ليال',
             image_url: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800",
             is_popular: true,
             is_featured: true
           },
           {
             id: 3,
-            title: "Dubai City Explorer",
-            title_bn: "দুবাই সিটি এক্সপ্লোরার",
-            destination: "Dubai, UAE",
-            price: 85000,
-            duration: "4 Days / 3 Nights",
+            title: 'Cairo Heritage Escape',
+            title_bn: 'رحلة تراثية إلى القاهرة',
+            destination: 'Cairo, Egypt',
+            destination_bn: 'القاهرة، مصر',
+            price: 72000,
+            duration: '4 Days / 3 Nights',
+            duration_bn: '4 أيام / 3 ليال',
             image_url: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800",
             is_popular: true,
             is_featured: true
           },
           {
             id: 4,
-            title: "Thailand Tropical Getaway",
-            title_bn: "থাইল্যান্ড ট্রপিক্যাল গেটওয়ে",
-            destination: "Thailand",
+            title: 'Thailand Tropical Getaway',
+            title_bn: 'عطلة استوائية في تايلاند',
+            destination: 'Thailand',
+            destination_bn: 'تايلاند',
             price: 65000,
-            duration: "5 Days / 4 Nights",
+            duration: '5 Days / 4 Nights',
+            duration_bn: '5 أيام / 4 ليال',
             image_url: "https://images.unsplash.com/photo-1528181304800-259b08848526?w=800",
             is_popular: true,
             is_featured: false
           },
           {
             id: 5,
-            title: "Singapore Family Fun",
-            title_bn: "সিঙ্গাপুর ফ্যামিলি ফান",
-            destination: "Singapore",
+            title: 'Singapore Family Fun',
+            title_bn: 'مغامرة عائلية في سنغافورة',
+            destination: 'Singapore',
+            destination_bn: 'سنغافورة',
             price: 95000,
-            duration: "4 Days / 3 Nights",
+            duration: '4 Days / 3 Nights',
+            duration_bn: '4 أيام / 3 ليال',
             image_url: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800",
             is_popular: false,
             is_featured: true
           },
           {
             id: 6,
-            title: "Sundarbans Adventure",
-            title_bn: "সুন্দরবন অ্যাডভেঞ্চার",
-            destination: "Sundarbans, Bangladesh",
-            price: 35000,
-            duration: "4 Days / 3 Nights",
+            title: 'Istanbul Cultural Journey',
+            title_bn: 'رحلة ثقافية إلى إسطنبول',
+            destination: 'Istanbul, Turkey',
+            destination_bn: 'إسطنبول، تركيا',
+            price: 88000,
+            duration: '4 Days / 3 Nights',
+            duration_bn: '4 أيام / 3 ليال',
             image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",
             is_popular: true,
             is_featured: false
@@ -139,15 +149,15 @@ const PopularPackages = () => {
             className={`inline-flex items-center px-6 py-2 rounded-full text-sm font-semibold mb-6 ${useGradients ? 'bg-gradient-to-r from-primary-500/10 to-purple-500/10 border border-primary-500/20 text-primary-500' : 'bg-slate-900 text-white border-0'}`}
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            {language === 'bn' ? 'সেরা প্যাকেজ' : 'Top Picks'}
+            {language === 'bn' ? 'أفضل العروض' : 'Top Picks'}
             <Sparkles className="w-4 h-4 ml-2" />
           </motion.span>
           <h2 className={`text-4xl sm:text-5xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'bn' ? 'জনপ্রিয় প্যাকেজসমূহ' : 'Popular Packages'}
+            {language === 'bn' ? 'الباقات الأكثر طلبًا' : 'Popular Packages'}
           </h2>
           <p className={`text-xl max-w-2xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {language === 'bn' 
-              ? 'আমাদের সবচেয়ে পছন্দের গন্তব্যগুলো অন্বেষণ করুন'
+              ? 'اكتشف الوجهات المختارة بعناية والمفضلة لدى عملائنا'
               : 'Discover our most loved destinations handpicked for you'}
           </p>
         </motion.div>
@@ -199,12 +209,12 @@ const PopularPackages = () => {
                     {pkg.is_popular && (
                       <span className={`px-4 py-1.5 text-white text-xs font-bold rounded-full flex items-center shadow-lg ${useGradients ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-slate-900'}`}>
                         <Star className="w-3 h-3 mr-1 fill-current" />
-                        {language === 'bn' ? 'জনপ্রিয়' : 'HOT'}
+                        {language === 'bn' ? 'شائع' : 'HOT'}
                       </span>
                     )}
                     {pkg.is_featured && (
                       <span className={`px-4 py-1.5 text-white text-xs font-bold rounded-full shadow-lg ${useGradients ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-slate-700'}`}>
-                        {language === 'bn' ? 'বিশেষ' : 'FEATURED'}
+                        {language === 'bn' ? 'مميز' : 'FEATURED'}
                       </span>
                     )}
                   </div>
@@ -213,7 +223,7 @@ const PopularPackages = () => {
                   <div className="absolute bottom-4 right-4">
                     <div className="px-5 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
                       <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        {language === 'bn' ? 'শুরু' : 'From'}
+                        {language === 'bn' ? 'ابتداءً من' : 'From'}
                       </span>
                       <div className={`text-2xl font-black ${useGradients ? 'bg-gradient-to-r from-primary-500 to-purple-500 bg-clip-text text-transparent' : 'text-slate-900'}`}>
                         {formatCurrency(pkg.price)}
@@ -225,7 +235,7 @@ const PopularPackages = () => {
                   <div className="absolute bottom-4 left-4">
                     <div className="flex items-center text-white/90 text-sm font-medium">
                       <MapPin className="w-4 h-4 mr-1" />
-                      {pkg.destination}
+                      {language === 'bn' ? (pkg.destination_bn || pkg.destination) : pkg.destination}
                     </div>
                   </div>
                 </div>
@@ -233,13 +243,13 @@ const PopularPackages = () => {
                 {/* Content */}
                 <div className="relative p-6">
                   <h3 className={`text-xl font-bold mb-3 line-clamp-1 group-hover:text-primary-500 transition-colors ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {language === 'bn' ? pkg.title_bn : pkg.title}
+                    {language === 'bn' ? (pkg.title_bn || pkg.title) : pkg.title}
                   </h3>
                   
                   <div className="flex items-center gap-4 mb-5">
                     <div className={`flex items-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       <Clock className="w-4 h-4 mr-1.5 text-primary-500" />
-                      {pkg.duration}
+                      {language === 'bn' ? (pkg.duration_bn || pkg.duration) : pkg.duration}
                     </div>
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
@@ -252,7 +262,7 @@ const PopularPackages = () => {
                     to={`/holidays/${pkg.id}`}
                     className={`flex items-center justify-center w-full py-3.5 rounded-xl text-white font-bold transition-all shadow-lg hover:shadow-xl group/btn ${useGradients ? 'bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600' : 'bg-slate-900 hover:bg-slate-800'}`}
                   >
-                    {language === 'bn' ? 'বিস্তারিত দেখুন' : 'Explore Now'}
+                    {language === 'bn' ? 'عرض التفاصيل' : 'Explore Now'}
                     <ArrowRight className="w-5 h-5 ml-2 transform group-hover/btn:translate-x-2 transition-transform" />
                   </Link>
                 </div>
@@ -273,7 +283,7 @@ const PopularPackages = () => {
             className={`group inline-flex items-center px-10 py-5 text-white font-bold text-lg rounded-2xl transition-all duration-300 relative overflow-hidden ${useGradients ? 'bg-gradient-to-r from-primary-500 via-purple-500 to-pink-500 hover:shadow-2xl hover:shadow-primary-500/30' : 'bg-slate-900 hover:bg-slate-800 shadow-lg hover:shadow-xl'}`}
           >
             {useGradients && <span className="absolute inset-0 bg-gradient-to-r from-primary-400 via-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity" />}
-            <span className="relative">{language === 'bn' ? 'সব প্যাকেজ দেখুন' : 'View All Packages'}</span>
+            <span className="relative">{language === 'bn' ? 'عرض جميع الباقات' : 'View All Packages'}</span>
             <ArrowRight className="relative w-6 h-6 ml-3 transform group-hover:translate-x-2 transition-transform" />
           </Link>
         </motion.div>

@@ -11,16 +11,13 @@ import {
   Plane,
   Package,
   Globe,
-  Star,
   ArrowUpRight,
   Activity,
-  Eye,
-  CheckCircle,
-  XCircle,
   AlertCircle
 } from 'lucide-react';
 import axios from 'axios';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AdminDashboard = () => {
   // Theme state
@@ -47,6 +44,7 @@ const AdminDashboard = () => {
   const [recentQueries, setRecentQueries] = useState([]);
   const [flightBookings, setFlightBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { formatCurrency } = useLanguage();
 
   useEffect(() => {
     fetchData();
@@ -98,7 +96,7 @@ const AdminDashboard = () => {
 
   // Stat cards configuration
   const mainStats = [
-    { title: 'Total Revenue', value: `৳${(stats?.totalRevenue || 430000).toLocaleString()}`, icon: DollarSign, color: 'from-emerald-500 to-green-600', change: '+25%', positive: true },
+    { title: 'Total Revenue', value: formatCurrency(stats?.totalRevenue || 430000), icon: DollarSign, color: 'from-emerald-500 to-green-600', change: '+25%', positive: true },
     { title: 'Total Bookings', value: stats?.totalBookings || 8, icon: Calendar, color: 'from-blue-500 to-indigo-600', change: '+18%', positive: true },
     { title: 'Flight Bookings', value: stats?.flightBookings || 5, icon: Plane, color: 'from-purple-500 to-pink-600', change: '+32%', positive: true },
     { title: 'Active Users', value: stats?.totalUsers || 12, icon: Users, color: 'from-orange-500 to-red-600', change: '+8%', positive: true },
@@ -257,7 +255,7 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-primary-500 font-semibold text-sm">৳{booking.totalAmount.toLocaleString()}</p>
+                    <p className="text-primary-500 font-semibold text-sm">{formatCurrency(booking.totalAmount || booking.amount || 0)}</p>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       booking.status === 'confirmed' 
                         ? 'bg-green-500/20 text-green-500' 
@@ -366,7 +364,7 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-purple-500 font-semibold text-sm">৳{(booking.totalPrice || 0).toLocaleString()}</p>
+                    <p className="text-purple-500 font-semibold text-sm">{formatCurrency(booking.totalPrice || booking.totalAmount || 0)}</p>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       booking.status === 'approved' 
                         ? 'bg-green-500/20 text-green-500' 

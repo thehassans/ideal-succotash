@@ -33,13 +33,13 @@ const TermsPage = () => {
       title_bn: 'পেমেন্ট নীতি',
       content: [
         'We accept bank transfers, credit/debit cards, and mobile banking.',
-        'All prices are in Bangladeshi Taka (BDT) unless otherwise stated.',
+        'All prices are in Saudi Riyal (SAR) unless otherwise stated.',
         'EMI options are available on selected bank cards.',
         'Payment receipts will be issued for all transactions.'
       ],
       content_bn: [
         'আমরা ব্যাংক ট্রান্সফার, ক্রেডিট/ডেবিট কার্ড এবং মোবাইল ব্যাংকিং গ্রহণ করি।',
-        'অন্যথায় বলা না হলে সব মূল্য বাংলাদেশী টাকায় (বিডিটি)।',
+        'ما لم يُذكر خلاف ذلك، فإن جميع الأسعار بالريال السعودي (SAR).',
         'নির্বাচিত ব্যাংক কার্ডে ইএমআই অপশন উপলব্ধ।',
         'সব লেনদেনের জন্য পেমেন্ট রসিদ প্রদান করা হবে।'
       ]
@@ -85,8 +85,8 @@ const TermsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Terms of Service | Explore Holidays</title>
-        <meta name="description" content="Read our terms of service, booking policies, and cancellation terms." />
+        <title>Terms of Service | Sabir Travels</title>
+        <meta name="description" content="Read Sabir Travels terms of service, booking policies, and cancellation terms." />
       </Helmet>
 
       {/* Hero */}
